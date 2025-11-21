@@ -16,10 +16,14 @@ export interface IconData {
   slug: string;
 }
 
-const iconList: IconData[] = Object.values(allSimpleIcons).map(icon => ({
-  title: icon.title,
-  slug: icon.slug,
-}));
+const iconList: IconData[] = Object.values(allSimpleIcons)
+  .filter((icon): icon is { title: string; slug: string } => 
+    typeof icon === 'object' && icon !== null && 'title' in icon
+  )
+  .map(icon => ({
+    title: icon.title,
+    slug: icon.slug,
+  }));
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
