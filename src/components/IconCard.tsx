@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,6 +24,8 @@ const svgCache = new Map<string, string>();
 export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onSelect }) => {
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     const fetchSvg = async () => {
@@ -49,6 +51,21 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onS
 
     fetchSvg();
   }, [icon.slug]);
+
+  // Check truncation status
+  useEffect(() => {
+    const checkTruncation = () => {
+      if (titleRef.current) {
+        // Check if scrollWidth (total width needed) is greater than clientWidth (visible width)
+        setIsTruncated(titleRef.current.scrollWidth > titleRef.current.clientWidth);
+      }
+    };
+
+    checkTruncation();
+    window.addEventListener('resize', checkTruncation);
+    return () => window.removeEventListener('resize', checkTruncation);
+  }, [icon.title]);
+
 
   const getSvgForPreview = (baseSvg: string | null, fillColor: string) => {
     if (!baseSvg) return '';
@@ -97,6 +114,12 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onS
     }
   };
 
+  const TitleComponent = (
+    <CardTitle ref={titleRef} className="truncate pr-8 leading-normal">
+      {icon.title}
+    </CardTitle>
+  );
+
   return (
     <Card className="flex flex-col relative bg-card">
       <div className="absolute top-3 right-3 z-10">
@@ -114,14 +137,18 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onS
         </Tooltip>
       </div>
       <CardHeader>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <CardTitle className="truncate pr-8 leading-normal">{icon.title}</CardTitle>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{icon.title}</p>
-          </TooltipContent>
-        </Tooltip>
+        {isTruncated ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              {TitleComponent}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{icon.title}</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          TitleComponent
+        )}
       </CardHeader>
       <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md">
         {loading ? (
