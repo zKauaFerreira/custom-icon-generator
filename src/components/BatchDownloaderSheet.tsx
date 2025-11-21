@@ -90,7 +90,7 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
     setIsClearDialogOpen(false);
   };
 
-  if (selectedIcons.size <= 1) {
+  if (selectedIcons.size === 0) {
     return null;
   }
 
