@@ -87,15 +87,60 @@ We use the official Simple Icons library.
 
 ### Core Technologies
 
-| Technology | Purpose | Badge |
-|---|---|---|
-| **React** | Frontend Library & Component Structure | ![React](https://skillicons.dev/icons?i=react) |
-| **TypeScript** | Enhanced Type Safety & Maintainability | ![TypeScript](https://skillicons.dev/icons?i=ts) |
-| **Tailwind CSS** | Utility-First Styling for Rapid UI Development | ![Tailwind CSS](https://skillicons.dev/icons?i=tailwind) |
-| **Simple Icons** | Comprehensive Icon Data Source | ![Simple Icons](https://img.shields.io/badge/-Simple_Icons-111111?logo=simple-icons&logoColor=white&style=flat-square) |
-| **Canvg** | Client-side SVG to Raster Conversion | ![Canvg](https://img.shields.io/badge/-Canvg-FF69B4?logo=javascript&logoColor=white&style=flat-square) |
-| **Lenis** | Smooth Scrolling Experience | ![Lenis](https://img.shields.io/badge/-Lenis-000000?logo=javascript&logoColor=white&style=flat-square) |
-| **Shadcn/ui** | Accessible & Beautiful UI Components | ![Shadcn/ui](https://img.shields.io/badge/-shadcn%2Fui-000000?logo=vercel&logoColor=white&style=flat-square) |
+<table align="center">
+  <tr>
+    <td align="center" width="180">
+      <a href="https://react.dev/">
+        <img src="https://skillicons.dev/icons?i=react" alt="React" width="60" height="60">
+        <br>React
+      </a>
+    </td>
+    <td align="center" width="180">
+      <a href="https://www.typescriptlang.org/">
+        <img src="https://skillicons.dev/icons?i=ts" alt="TypeScript" width="60" height="60">
+        <br>TypeScript
+      </a>
+    </td>
+    <td align="center" width="180">
+      <a href="https://tailwindcss.com/">
+        <img src="https://skillicons.dev/icons?i=tailwind" alt="Tailwind CSS" width="60" height="60">
+        <br>Tailwind CSS
+      </a>
+    </td>
+    <td align="center" width="180">
+      <a href="https://simpleicons.org/">
+        <img src="https://skillicons.dev/icons?i=simpleicons" alt="Simple Icons" width="60" height="60">
+        <br>Simple Icons
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="180">
+      <a href="https://canvg.github.io/">
+        <img src="https://skillicons.dev/icons?i=js" alt="Canvg" width="60" height="60">
+        <br>Canvg (JS)
+      </a>
+    </td>
+    <td align="center" width="180">
+      <a href="https://lenis.studiofreight.com/">
+        <img src="https://skillicons.dev/icons?i=js" alt="Lenis" width="60" height="60">
+        <br>Lenis (JS)
+      </a>
+    </td>
+    <td align="center" width="180">
+      <a href="https://ui.shadcn.com/">
+        <img src="https://skillicons.dev/icons?i=vercel" alt="Shadcn/ui" width="60" height="60">
+        <br>Shadcn/ui
+      </a>
+    </td>
+    <td align="center" width="180">
+      <a href="https://vitejs.dev/">
+        <img src="https://skillicons.dev/icons?i=vite" alt="Vite" width="60" height="60">
+        <br>Vite
+      </a>
+    </td>
+  </tr>
+</table>
 
 ---
 
