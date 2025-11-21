@@ -1,0 +1,32 @@
+name: Check simple-icons Version
+
+on:
+  schedule:
+    - cron: "0 3 * * *"     # 00:00 BRT (03:00 UTC)
+  workflow_dispatch:        # permite rodar manualmente
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout autorun branch
+        uses: actions/checkout@v3
+        with:
+          ref: autorun
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run update script
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          REPO_OWNER: ${{ secrets.REPO_OWNER }}
+          REPO_NAME: ${{ secrets.REPO_NAME }}
+          TARGET_BRANCH: main
+        run: node scripts/check-simple-icons.js
