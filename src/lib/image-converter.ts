@@ -1,15 +1,14 @@
 import ICO from 'icojs';
 
 const svgTextToDataUrl = (svgText: string, size: number): string => {
-  // Adiciona largura e altura ao SVG para renderização correta no canvas.
+  // Adiciona largura, altura e o namespace xmlns para garantir a renderização correta.
+  // A ausência do xmlns pode fazer com que o navegador não renderize o SVG em um <img>.
   const svgWithSize = svgText.replace(
     '<svg',
-    `<svg width="${size}" height="${size}"`
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"`
   );
-  // A codificação btoa pode falhar com caracteres UTF-8.
-  // Usamos este truque com encodeURIComponent para garantir que a string seja codificada corretamente.
-  const encodedSvg = btoa(unescape(encodeURIComponent(svgWithSize)));
-  return `data:image/svg+xml;base64,${encodedSvg}`;
+  // Usa encodeURIComponent, que é mais robusto para SVGs do que btoa.
+  return `data:image/svg+xml,${encodeURIComponent(svgWithSize)}`;
 };
 
 export const svgToPng = (svgText: string, size: number): Promise<Blob> => {
