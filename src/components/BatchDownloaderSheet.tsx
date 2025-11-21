@@ -15,6 +15,8 @@ import type { IconData } from '@/pages/Index';
 import { showError, showLoading, showSuccess, dismissToast } from '@/utils/toast';
 import { ScrollArea } from './ui/scroll-area';
 import { SelectedIconItem } from './SelectedIconItem';
+import { DownloadFormatDialog, DownloadFormat } from './DownloadFormatDialog';
+import { svgToPng, svgToIco } from '@/lib/image-converter';
 
 interface BatchDownloaderSheetProps {
   selectedIcons: Set<string>;
@@ -31,31 +33,50 @@ const getColoredSvg = (baseSvg: string, fillColor: string) => {
 
 export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ selectedIcons, allIcons, color, onClear, onRemoveIcon }) => {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const selectedIconsDetails = allIcons.filter(icon => selectedIcons.has(icon.slug));
 
-  const handleDownloadZip = async () => {
+  const handleDownloadZip = async (format: DownloadFormat) => {
     setIsDownloading(true);
-    const loadingToast = showLoading(`Preparando ${selectedIcons.size} ícones...`);
+    setIsDialogOpen(false);
+    const loadingToast = showLoading(`Preparando ${selectedIcons.size} ícones como ${format.toUpperCase()}...`);
     const zip = new JSZip();
 
     try {
-      await Promise.all(selectedIconsDetails.map(async (icon) => {
-        const response = await fetch(`https://cdn.simpleicons.org/${icon.slug}`);
-        if (!response.ok) return;
-        const svgText = await response.text();
-        const coloredSvg = getColoredSvg(svgText, color);
-        const cleanColor = color.substring(1);
-        zip.file(`${icon.slug}-${cleanColor}.svg`, coloredSvg);
-      }));
+      const iconPromises = selectedIconsDetails.map(async (icon) => {
+        try {
+          const response = await fetch(`https://cdn.simpleicons.org/${icon.slug}`);
+          if (!response.ok) return;
+          const svgText = await response.text();
+          const coloredSvg = getColoredSvg(svgText, color);
+          const cleanColor = color.substring(1);
+          const fileName = `${icon.slug}-${cleanColor}.${format}`;
+
+          let fileContent: Blob | string;
+
+          if (format === 'svg') {
+            fileContent = coloredSvg;
+          } else if (format === 'png') {
+            fileContent = await svgToPng(coloredSvg, 256);
+          } else { // ico
+            fileContent = await svgToIco(coloredSvg);
+          }
+          
+          zip.file(fileName, fileContent);
+        } catch (e) {
+          console.error(`Falha ao processar o ícone ${icon.slug}:`, e);
+        }
+      });
+
+      await Promise.all(iconPromises);
 
       const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, `icons-${color.substring(1)}.zip`);
+      saveAs(content, `icons-${color.substring(1)}-${format}.zip`);
       dismissToast(loadingToast);
       showSuccess('Download iniciado!');
-    } catch (error)
-    {
-      console.error("Failed to create ZIP file:", error);
+    } catch (error) {
+      console.error("Falha ao criar o arquivo ZIP:", error);
       dismissToast(loadingToast);
       showError('Falha ao gerar o arquivo ZIP.');
     } finally {
@@ -68,38 +89,46 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
   }
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button className="fixed bottom-8 right-8 z-50 h-14 rounded-full shadow-lg flex items-center gap-3 px-6 animate-in fade-in-90 slide-in-from-bottom-10 duration-300">
-          <FileArchive className="h-6 w-6" />
-          <span className="text-lg font-semibold">{selectedIcons.size} selecionado(s)</span>
-        </Button>
-      </SheetTrigger>
-      <SheetContent className="w-[400px] sm:w-[540px] flex flex-col" side="right">
-        <SheetHeader>
-          <SheetTitle>Ícones Selecionados ({selectedIcons.size})</SheetTitle>
-          <SheetDescription>
-            Revise sua seleção e baixe todos os ícones de uma vez.
-          </SheetDescription>
-        </SheetHeader>
-        <ScrollArea className="flex-grow my-4 pr-4">
-          <div className="space-y-2">
-            {selectedIconsDetails.map(icon => (
-              <SelectedIconItem key={icon.slug} icon={icon} onRemove={onRemoveIcon} />
-            ))}
+    <>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button className="fixed bottom-8 right-8 z-50 h-14 rounded-full shadow-lg flex items-center gap-3 px-6 animate-in fade-in-90 slide-in-from-bottom-10 duration-300">
+            <FileArchive className="h-6 w-6" />
+            <span className="text-lg font-semibold">{selectedIcons.size} selecionado(s)</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent className="w-[400px] sm:w-[540px] flex flex-col" side="right">
+          <SheetHeader>
+            <SheetTitle>Ícones Selecionados ({selectedIcons.size})</SheetTitle>
+            <SheetDescription>
+              Revise sua seleção e baixe todos os ícones de uma vez.
+            </SheetDescription>
+          </SheetHeader>
+          <ScrollArea className="flex-grow my-4 pr-4">
+            <div className="space-y-2">
+              {selectedIconsDetails.map(icon => (
+                <SelectedIconItem key={icon.slug} icon={icon} onRemove={onRemoveIcon} />
+              ))}
+            </div>
+          </ScrollArea>
+          <div className="flex gap-2 mt-auto border-t pt-4">
+            <Button onClick={() => setIsDialogOpen(true)} disabled={isDownloading} className="flex-grow">
+              <Download className="h-4 w-4 mr-2" />
+              Baixar ZIP
+            </Button>
+            <Button variant="outline" onClick={onClear} disabled={isDownloading}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              Limpar
+            </Button>
           </div>
-        </ScrollArea>
-        <div className="flex gap-2 mt-auto border-t pt-4">
-          <Button onClick={handleDownloadZip} disabled={isDownloading} className="flex-grow">
-            <Download className="h-4 w-4 mr-2" />
-            Baixar ZIP
-          </Button>
-          <Button variant="outline" onClick={onClear} disabled={isDownloading}>
-            <Trash2 className="h-4 w-4 mr-2" />
-            Limpar
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
+        </SheetContent>
+      </Sheet>
+      <DownloadFormatDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onDownload={handleDownloadZip}
+        isDownloading={isDownloading}
+      />
+    </>
   );
 };

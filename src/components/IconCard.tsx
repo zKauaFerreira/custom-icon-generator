@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import ICO from 'icojs';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from './ui/checkbox';
+import { svgToPng, svgToIco } from '@/lib/image-converter';
+import { showError } from '@/utils/toast';
 
 interface IconData {
   title: string;
@@ -64,73 +65,28 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
     URL.revokeObjectURL(url);
   };
 
-  const convertSvgToPng = (svgBlobUrl: string, size: number): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return reject(new Error("Could not get canvas context"));
-
-      const img = new Image();
-      img.onload = () => {
-        canvas.width = size;
-        canvas.height = size;
-        ctx.drawImage(img, 0, 0, size, size);
-        resolve(canvas.toDataURL('image/png'));
-      };
-      img.onerror = (e) => reject(new Error(`Failed to load SVG blob into image: ${e}`));
-      img.src = svgBlobUrl;
-    });
-  };
-
   const handleDownload = async (format: 'svg' | 'png' | 'ico') => {
     const coloredSvg = getColoredSvg(svgContent, color);
     if (!coloredSvg) return;
 
     const cleanColor = color.substring(1);
     const fileName = `${icon.slug}-${cleanColor}.${format}`;
-    const svgBlob = new Blob([coloredSvg], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(svgBlob);
 
     try {
+      let blob: Blob;
       if (format === 'svg') {
-        triggerDownload(url, fileName);
+        blob = new Blob([coloredSvg], { type: 'image/svg+xml;charset=utf-8' });
       } else if (format === 'png') {
-        const pngUrl = await convertSvgToPng(url, 256);
-        triggerDownload(pngUrl, fileName);
-      } else if (format === 'ico') {
-        const sizes = [16, 32, 48];
-        const imageBuffers = await Promise.all(sizes.map(size => {
-          return new Promise<{ data: Uint8ClampedArray; width: number; height: number; }>((resolve, reject) => {
-            const canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return reject(new Error('Could not get canvas context'));
-
-            const img = new Image();
-            img.onload = () => {
-              ctx.drawImage(img, 0, 0, size, size);
-              const imageData = ctx.getImageData(0, 0, size, size);
-              resolve({
-                data: imageData.data,
-                width: size,
-                height: size,
-              });
-            };
-            img.onerror = (err) => reject(err);
-            img.src = url;
-          });
-        }));
-
-        const icoBuffer = ICO.encode(imageBuffers);
-        const icoBlob = new Blob([icoBuffer], { type: 'image/x-icon' });
-        const icoUrl = URL.createObjectURL(icoBlob);
-        triggerDownload(icoUrl, fileName);
+        blob = await svgToPng(coloredSvg, 256);
+      } else { // ico
+        blob = await svgToIco(coloredSvg);
       }
+      
+      const url = URL.createObjectURL(blob);
+      triggerDownload(url, fileName);
     } catch (error) {
       console.error(`Failed to download as ${format}:`, error);
-    } finally {
-      URL.revokeObjectURL(url);
+      showError(`Falha ao baixar como ${format.toUpperCase()}.`);
     }
   };
 
