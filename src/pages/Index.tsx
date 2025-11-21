@@ -4,15 +4,14 @@ import { IconCard } from "@/components/IconCard";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import * as allSimpleIcons from 'simple-icons';
 import type { SimpleIcon } from 'simple-icons';
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Bookmark, Shuffle } from "lucide-react";
-import { PreviewBackgroundSelector } from "@/components/PreviewBackgroundSelector";
+import { Bookmark, Search, Shuffle, X } from "lucide-react";
 import { ColorPicker } from "@/components/ColorPicker";
 import { Button } from "@/components/ui/button";
 import { BatchDownloaderSheet } from "@/components/BatchDownloaderSheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { BackToTopButton } from "@/components/BackToTopButton";
 
 export interface IconData {
   title: string;
@@ -37,16 +36,17 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return newArray;
 };
 
+const getRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+
 const ITEMS_PER_PAGE = 50;
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [color, setColor] = useState("#4287f5");
+  const [color, setColor] = useState(getRandomColor());
   const [recentColors, setRecentColors] = useState<string[]>([]);
   const [shuffledIcons, setShuffledIcons] = useState<IconData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<'random' | 'az' | 'za'>('random');
-  const [previewBg, setPreviewBg] = useState('transparent');
   const [selectedIcons, setSelectedIcons] = useState(new Set<string>());
 
   useEffect(() => {
@@ -62,6 +62,12 @@ const Index = () => {
 
   const updateRecentColors = (newColor: string) => {
     const updatedColors = [newColor, ...recentColors.filter((c) => c !== newColor)].slice(0, 10);
+    setRecentColors(updatedColors);
+    localStorage.setItem("recentColors", JSON.stringify(updatedColors));
+  };
+  
+  const removeRecentColor = (colorToRemove: string) => {
+    const updatedColors = recentColors.filter(c => c !== colorToRemove);
     setRecentColors(updatedColors);
     localStorage.setItem("recentColors", JSON.stringify(updatedColors));
   };
@@ -106,10 +112,7 @@ const Index = () => {
 
   return (
     <div className="container mx-auto p-4 md:p-8">
-      <header className="text-center mb-8 relative">
-        <div className="absolute top-0 right-0">
-          <ThemeToggle />
-        </div>
+      <header className="text-center mb-8">
         <h1 className="text-4xl font-bold tracking-tight">Gerador de Ícones Personalizados</h1>
         <p className="text-muted-foreground mt-2">
           Pesquise, selecione, personalize e baixe ícones no formato que precisar.
@@ -117,43 +120,49 @@ const Index = () => {
       </header>
 
       <main>
-        <div className="sticky top-4 z-10 bg-background/80 backdrop-blur-sm p-4 rounded-lg border mb-8 flex flex-col gap-4">
+        <div className="bg-background/80 backdrop-blur-sm p-4 rounded-lg border mb-8 flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4 items-center">
-            <Input
-              type="text"
-              placeholder="Pesquisar ícones (ex: Spotify, Discord...)"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-grow"
-            />
-            <div className="flex items-center gap-2">
-              <Label>Ordenar</Label>
-              <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
-                <ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem>
-                <ToggleGroupItem value="az" aria-label="Ordenar de A a Z">A-Z</ToggleGroupItem>
-                <ToggleGroupItem value="za" aria-label="Ordenar de Z a A">Z-A</ToggleGroupItem>
-              </ToggleGroup>
+            <div className="relative flex-grow w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Pesquisar ícones (ex: Spotify, Discord...)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
             </div>
+            <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
+              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem></TooltipTrigger><TooltipContent>Aleatório</TooltipContent></Tooltip>
+              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="az" aria-label="Ordenar de A a Z">A-Z</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética</TooltipContent></Tooltip>
+              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="za" aria-label="Ordenar de Z a A">Z-A</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética Inversa</TooltipContent></Tooltip>
+            </ToggleGroup>
           </div>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <ColorPicker value={color} onChange={setColor} />
-              <Button variant="outline" size="icon" onClick={() => updateRecentColors(color)}>
-                <Bookmark className="h-4 w-4" />
-              </Button>
+              <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => setColor(getRandomColor())}><Shuffle className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Cor Aleatória</TooltipContent></Tooltip>
+              <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => updateRecentColors(color)}><Bookmark className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Salvar Cor</TooltipContent></Tooltip>
               <div className="flex gap-2 flex-wrap">
                 {recentColors.map((recentColor) => (
-                  <button
-                    key={recentColor}
-                    className="w-8 h-8 rounded-full border"
-                    style={{ backgroundColor: recentColor }}
-                    onClick={() => setColor(recentColor)}
-                    aria-label={`Select color ${recentColor}`}
-                  />
+                  <div key={recentColor} className="relative group">
+                    <button
+                      className="w-8 h-8 rounded-full border"
+                      style={{ backgroundColor: recentColor }}
+                      onClick={() => setColor(recentColor)}
+                      aria-label={`Select color ${recentColor}`}
+                    />
+                    <button
+                      onClick={() => removeRecentColor(recentColor)}
+                      className="absolute -top-1 -right-1 bg-card border rounded-full p-0.5 hidden group-hover:flex items-center justify-center"
+                      aria-label={`Remove color ${recentColor}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
-            <PreviewBackgroundSelector value={previewBg} onChange={setPreviewBg} />
           </div>
         </div>
 
@@ -165,7 +174,6 @@ const Index = () => {
                   key={icon.slug} 
                   icon={icon} 
                   color={color} 
-                  previewBg={previewBg}
                   isSelected={selectedIcons.has(icon.slug)}
                   onSelect={handleSelectIcon}
                 />
@@ -199,6 +207,8 @@ const Index = () => {
         onClear={() => setSelectedIcons(new Set())}
         onRemoveIcon={handleSelectIcon}
       />
+      
+      <BackToTopButton />
 
       <MadeWithDyad />
     </div>

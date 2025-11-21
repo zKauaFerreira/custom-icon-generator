@@ -14,14 +14,13 @@ interface IconData {
 interface IconCardProps {
   icon: IconData;
   color: string;
-  previewBg: string;
   isSelected: boolean;
   onSelect: (slug: string) => void;
 }
 
 const svgCache = new Map<string, string>();
 
-export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSelected, onSelect }) => {
+export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onSelect }) => {
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -66,7 +65,6 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
   };
 
   const handleDownload = async (format: 'svg' | 'png' | 'ico') => {
-    // Ponto crítico da correção: Sempre usar o svgContent original e não modificado.
     if (!svgContent) {
       showError("Conteúdo do ícone ainda não carregado.");
       return;
@@ -78,7 +76,6 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
     try {
       let blob: Blob;
       if (format === 'svg') {
-        // Para o download de SVG, a coloração é feita de forma segura aqui.
         const parser = new DOMParser();
         const doc = parser.parseFromString(svgContent, "image/svg+xml");
         doc.documentElement.setAttribute('fill', color);
@@ -86,10 +83,8 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
         const coloredSvg = serializer.serializeToString(doc.documentElement);
         blob = new Blob([coloredSvg], { type: 'image/svg+xml;charset=utf-8' });
       } else if (format === 'png') {
-        // Passa o SVG ORIGINAL e a cor para a função de conversão.
         blob = await svgToPng(svgContent, 256, color);
       } else { // ico
-        // Passa o SVG ORIGINAL e a cor para a função de conversão.
         blob = await svgToIco(svgContent, color);
       }
       
@@ -102,7 +97,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
   };
 
   return (
-    <Card className="flex flex-col relative">
+    <Card className="flex flex-col relative bg-card">
       <div className="absolute top-3 right-3 z-10">
         <Checkbox
           checked={isSelected}
@@ -113,7 +108,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
       <CardHeader>
         <CardTitle className="truncate pr-8 leading-normal">{icon.title}</CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md" style={{ backgroundColor: previewBg }}>
+      <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md bg-black/20">
         {loading ? (
           <Skeleton className="h-16 w-16" />
         ) : svgContent ? (

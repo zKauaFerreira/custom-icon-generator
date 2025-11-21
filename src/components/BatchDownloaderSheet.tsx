@@ -43,7 +43,6 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
         try {
           const response = await fetch(`https://cdn.simpleicons.org/${icon.slug}`);
           if (!response.ok) return;
-          // Ponto crítico da correção: Sempre usar o svgText original.
           const svgText = await response.text();
           const cleanColor = color.substring(1);
           const fileName = `${icon.slug}-${cleanColor}.${format}`;
@@ -51,17 +50,14 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
           let fileContent: Blob | string;
 
           if (format === 'svg') {
-            // Coloração segura para o download de SVG.
             const parser = new DOMParser();
             const doc = parser.parseFromString(svgText, "image/svg+xml");
             doc.documentElement.setAttribute('fill', color);
             const serializer = new XMLSerializer();
             fileContent = serializer.serializeToString(doc.documentElement);
           } else if (format === 'png') {
-            // Passa o SVG ORIGINAL e a cor para a função de conversão.
             fileContent = await svgToPng(svgText, 256, color);
           } else { // ico
-            // Passa o SVG ORIGINAL e a cor para a função de conversão.
             fileContent = await svgToIco(svgText, color);
           }
           
@@ -86,7 +82,7 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
     }
   };
 
-  if (selectedIcons.size === 0) {
+  if (selectedIcons.size <= 1) {
     return null;
   }
 
