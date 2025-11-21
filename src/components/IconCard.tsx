@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -70,29 +70,10 @@ const canvasToIcoUrl = (canvas: HTMLCanvasElement): Promise<string> => {
   });
 };
 
-
 export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) => {
-  const [svgContent, setSvgContent] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    fetch(`https://cdn.simpleicons.org/${icon.slug}`)
-      .then(res => res.text())
-      .then(text => {
-        setSvgContent(text);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(`Failed to fetch icon: ${icon.slug}`, err);
-        setLoading(false);
-      });
-  }, [icon.slug]);
-
-  const coloredSvg = useMemo(() => {
-    if (!svgContent) return null;
-    return svgContent.replace('<svg', `<svg fill="${color}"`);
-  }, [svgContent, color]);
+  const [imageLoading, setImageLoading] = useState(true);
+  const cleanColor = color.substring(1);
+  const iconUrl = `https://cdn.simpleicons.org/${icon.slug}/${cleanColor}`;
 
   const triggerDownload = (url: string, fileName: string) => {
     const a = document.createElement('a');
@@ -105,15 +86,18 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) =
   };
 
   const handleDownload = async (format: 'svg' | 'png' | 'ico') => {
-    if (!coloredSvg) return;
     onColorUse(color);
-
-    const fileName = `${icon.slug}-${color.substring(1)}.${format}`;
+    const fileName = `${icon.slug}-${cleanColor}.${format}`;
 
     if (format === 'svg') {
-      const blob = new Blob([coloredSvg], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
-      triggerDownload(url, fileName);
+      try {
+        const response = await fetch(iconUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        triggerDownload(url, fileName);
+      } catch (error) {
+        console.error("Failed to download SVG:", error);
+      }
       return;
     }
 
@@ -122,14 +106,12 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) =
     if (!ctx) return;
 
     const img = new Image();
-    const svgBlob = new Blob([coloredSvg], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(svgBlob);
+    img.crossOrigin = 'anonymous'; // Necessary for loading external images into canvas
 
     img.onload = async () => {
       canvas.width = 256;
       canvas.height = 256;
       ctx.drawImage(img, 0, 0, 256, 256);
-      URL.revokeObjectURL(url);
 
       if (format === 'png') {
         const pngUrl = canvas.toDataURL('image/png');
@@ -139,26 +121,13 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) =
         triggerDownload(icoUrl, fileName);
       }
     };
-    img.src = url;
-  };
+    
+    img.onerror = () => {
+      console.error("Failed to load image for conversion:", iconUrl);
+    };
 
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-3/4" />
-        </CardHeader>
-        <CardContent className="flex justify-center items-center p-6">
-          <Skeleton className="h-16 w-16" />
-        </CardContent>
-        <CardFooter className="flex justify-center gap-2">
-          <Skeleton className="h-10 w-20" />
-          <Skeleton className="h-10 w-20" />
-          <Skeleton className="h-10 w-20" />
-        </CardFooter>
-      </Card>
-    );
-  }
+    img.src = iconUrl;
+  };
 
   return (
     <Card className="flex flex-col">
@@ -166,12 +135,14 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) =
         <CardTitle className="truncate">{icon.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow flex justify-center items-center p-6">
-        {coloredSvg && (
-          <div
-            className="w-16 h-16"
-            dangerouslySetInnerHTML={{ __html: coloredSvg }}
-          />
-        )}
+        {imageLoading && <Skeleton className="h-16 w-16" />}
+        <img
+          src={iconUrl}
+          alt={icon.title}
+          className={`w-16 h-16 ${imageLoading ? 'hidden' : 'block'}`}
+          onLoad={() => setImageLoading(false)}
+          onError={() => setImageLoading(false)}
+        />
       </CardContent>
       <CardFooter className="flex flex-wrap justify-center gap-2">
         <Button size="sm" variant="outline" onClick={() => handleDownload('svg')}>SVG</Button>
