@@ -5,75 +5,107 @@
   <img src="https://img.shields.io/badge/Built%20with-React%20%26%20Tailwind-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React Badge">
 </p>
 
-The **Custom Simple Icon Generator** is a fast, responsive web application that allows users to search, customize, and download thousands of popular brand icons from the Simple Icons library in various formats (SVG, PNG, ICO) and any color.
+The **Custom Simple Icon Generator** is a fast, responsive web application designed to empower developers and designers. It allows you to effortlessly search, customize, and download thousands of popular brand icons from the Simple Icons library in various formats (SVG, PNG, ICO) and any color you desire.
 
 ---
 
-## 🚀 Key Features
+## 🌟 Core Features
 
-- **🎨 Dynamic Color Picker:** Instantly apply any hex color to all icons.
-- **💾 Recent Colors:** Save and quickly reuse your favorite colors.
-- **🔍 Powerful Search:** Filter through over 3000 icons by title or slug.
-- **🖼️ Custom Resolution:** Configure PNG and ICO downloads up to 4096x4096 pixels.
-- **📦 Batch Download:** Select multiple icons and download them all in a single ZIP file.
-- **💻 SVG Code Viewer:** Inspect and copy the colored SVG code directly.
-- **🌐 Responsive Design:** Seamless experience on desktop and mobile devices.
+This tool is packed with functionalities to streamline your icon workflow:
 
----
-
-## ⚙️ How to Use
-
-The application provides a simple interface to customize your icons:
-
-### 1. Search and Filter
-Use the search bar to find icons by name (e.g., "GitHub") or slug (e.g., "github"). You can sort the results using the A-Z, Z-A, or Random toggles.
-
-### 2. Customize Color
-- **Color Picker:** Click the color swatch to open the hex color picker and select your desired color.
-- **Randomize:** Use the <kbd>Shuffle</kbd> button to apply a random color.
-- **Save/Use Recent:** Use the <kbd>Bookmark</kbd> button to save the current color, or click on a saved color swatch to reuse it.
-
-### 3. Configure Resolution
-Click the resolution button (e.g., <kbd>256x256</kbd>) to open the dialog and set the desired size for PNG and ICO downloads. The maximum supported resolution is 4096x4096px.
-
-### 4. Download Icons
-
-#### Individual Download
-Each icon card offers three download options:
-- **SVG:** Downloads the vector file, colored with the selected hex code.
-- **PNG:** Downloads a raster image at the configured resolution.
-- **ICO:** Downloads a Windows icon file containing multiple standard resolutions (16, 32, 48, 64px), generated at the configured color.
-
-#### Batch Download
-1. **Select Icons:** Use the checkbox on the top right of each icon card to select it.
-2. **Open Batch Sheet:** Once two or more icons are selected, a floating button appears at the bottom right showing the count. Click it to open the batch download panel.
-3. **Download ZIP:** Choose your desired format (SVG, PNG, or ICO) and download all selected icons in a single compressed file.
+| Icon | Feature | Description |
+| :---: | :--- | :--- |
+| 🎨 | **Dynamic Color Picker** | Instantly apply any hex color to all icons in real-time. |
+| 💾 | **Recent Colors** | Save and quickly reuse your favorite color palettes. |
+| 🔍 | **Powerful Search** | Filter through over 3000 icons by title or slug with smart sorting. |
+| 🖼️ | **Custom Resolution** | Configure raster downloads (PNG and ICO) up to a massive **4096x4096** pixels. |
+| 📦 | **Batch Download** | Select multiple icons and download them all efficiently in a single ZIP file. |
+| 💻 | **SVG Code Viewer** | Inspect, copy, and download the colored SVG code directly. |
+| 📱 | **Responsive Design** | A seamless and intuitive experience across desktop and mobile devices. |
 
 ---
 
-## 🛠️ Technical Stack
+## 💡 Detailed Usage Guide
 
-This application is built using modern web technologies:
+The application's interface is designed for maximum efficiency.
+
+### 1. Finding Your Icon 🔎
+
+Use the search bar at the top to filter the extensive library.
+
+*   **Search:** Type the brand name (e.g., "GitHub") or slug (e.g., "github").
+*   **Sorting:** Use the toggle group to sort results by **A-Z**, **Z-A**, or **Random** order.
+
+### 2. Customizing the Color 🌈
+
+The color controls are central to the customization process.
+
+*   **Color Picker:** Click the main color swatch to open the hex color picker and select your desired shade.
+*   **Randomize:** Hit the <kbd>Shuffle</kbd> button to apply a random color instantly.
+*   **Saving Colors:** Click the <kbd>Bookmark</kbd> button to save the current color to your recent list.
+*   **Recent Colors:** Click on any saved color swatch to reuse it, or click the small <kbd>X</kbd> to remove it from the list.
+
+### 3. Setting Resolution 📐
+
+For raster formats (PNG and ICO), you can define the output size.
+
+*   Click the resolution button (e.g., <kbd>256x256</kbd>) to open the configuration dialog.
+*   Choose a predefined size or enter a custom value up to 4096px.
+
+### 4. Downloading Icons ⬇️
+
+#### A. Individual Download (Icon Card)
+Each icon card provides quick download buttons:
+*   **SVG:** Downloads the pure vector file, colored with the selected hex code.
+*   **PNG:** Downloads a raster image at the configured resolution.
+*   **ICO:** Downloads a Windows icon file containing multiple standard resolutions (16, 32, 48, 64px), generated at the configured color.
+
+#### B. Batch Download (ZIP Archive)
+1.  **Selection:** Use the checkbox on the top right of each icon card to select it.
+2.  **Batch Sheet:** A floating button appears when 2+ icons are selected. Click it to open the batch panel.
+3.  **Download:** Choose your desired format (SVG, PNG, or ICO) and download all selected icons in a single compressed `.zip` file.
+
+---
+
+## ⚙️ Technical Architecture
+
+This application is a modern, client-side React application focused on performance and smooth user experience, leveraging powerful libraries for icon handling and conversion.
+
+### Icon Source Information
+We use the official Simple Icons library.
+
+<details>
+<summary>ℹ️ Click to view current Simple Icons version</summary>
+
+| Property | Value |
+|---|---|
+| **Library** | `simple-icons` |
+| **Version** | `v15.21.0` |
+| **Total Icons** | `> 3000` |
+
+</details>
+
+### Core Technologies
 
 | Technology | Purpose | Badge |
 |---|---|---|
-| **React** | Frontend Library | ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black&style=flat-square) |
-| **TypeScript** | Type Safety | ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white&style=flat-square) |
-| **Tailwind CSS** | Utility-First Styling | ![Tailwind CSS](https://img.shields.io/badge/-Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white&style=flat-square) |
-| **Simple Icons** | Icon Source (v15.21.0) | ![Simple Icons](https://img.shields.io/badge/-Simple_Icons-111111?logo=simple-icons&logoColor=white&style=flat-square) |
-| **Canvg** | SVG to Raster Conversion | ![Canvg](https://img.shields.io/badge/-Canvg-FF69B4?logo=javascript&logoColor=white&style=flat-square) |
-| **Lenis** | Smooth Scrolling | ![Lenis](https://img.shields.io/badge/-Lenis-000000?logo=javascript&logoColor=white&style=flat-square) |
-| **Shadcn/ui** | Component Library | ![Shadcn/ui](https://img.shields.io/badge/-shadcn%2Fui-000000?logo=vercel&logoColor=white&style=flat-square) |
+| **React** | Frontend Library & Component Structure | ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black&style=flat-square) |
+| **TypeScript** | Enhanced Type Safety & Maintainability | ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white&style=flat-square) |
+| **Tailwind CSS** | Utility-First Styling for Rapid UI Development | ![Tailwind CSS](https://img.shields.io/badge/-Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white&style=flat-square) |
+| **Simple Icons** | Comprehensive Icon Data Source | ![Simple Icons](https://img.shields.io/badge/-Simple_Icons-111111?logo=simple-icons&logoColor=white&style=flat-square) |
+| **Canvg** | Client-side SVG to Raster Conversion | ![Canvg](https://img.shields.io/badge/-Canvg-FF69B4?logo=javascript&logoColor=white&style=flat-square) |
+| **Lenis** | Smooth Scrolling Experience | ![Lenis](https://img.shields.io/badge/-Lenis-000000?logo=javascript&logoColor=white&style=flat-square) |
+| **Shadcn/ui** | Accessible & Beautiful UI Components | ![Shadcn/ui](https://img.shields.io/badge/-shadcn%2Fui-000000?logo=vercel&logoColor=white&style=flat-square) |
 
 ---
 
 ## 👨‍💻 Development Setup
 
-To run this project locally, follow these steps:
+To run this project locally for development, follow these steps:
 
 ### 📦 Prerequisites
 
-Ensure you have Node.js (v18+) and pnpm installed.
+Ensure you have Node.js (v18+) and pnpm installed on your system.
 
 ### 📝 Steps to Run
 
@@ -92,7 +124,16 @@ Ensure you have Node.js (v18+) and pnpm installed.
    pnpm run dev
    ```
 
-The application will be available at `http://localhost:8080`.
+The application will be available at `http://localhost:8080`. Happy coding! 🚀
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! If you find a bug or have a suggestion for a new feature, please feel free to:
+
+1.  Open an **Issue** to report bugs or propose enhancements.
+2.  Submit a **Pull Request** with your code changes.
 
 ---
 
@@ -107,5 +148,5 @@ This project is licensed under the MIT License.
 ---
 
 <p align="center">
-  Made with 💙 by Dyad.
+  Made with 💙 by Kaua~ Ferreira.
 </p>
