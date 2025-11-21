@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { IconCard } from "@/components/IconCard";
-import { ColorSelector } from "@/components/ColorSelector";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import * as allSimpleIcons from 'simple-icons';
 import type { SimpleIcon } from 'simple-icons';
@@ -9,8 +8,11 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Shuffle } from "lucide-react";
+import { Bookmark, Shuffle } from "lucide-react";
 import { PreviewBackgroundSelector } from "@/components/PreviewBackgroundSelector";
+import { ColorPicker } from "@/components/ColorPicker";
+import { Button } from "@/components/ui/button";
+import { BatchDownloader } from "@/components/BatchDownloader";
 
 export interface IconData {
   title: string;
@@ -45,6 +47,7 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<'random' | 'az' | 'za'>('random');
   const [previewBg, setPreviewBg] = useState('transparent');
+  const [selectedIcons, setSelectedIcons] = useState(new Set<string>());
 
   useEffect(() => {
     try {
@@ -61,6 +64,18 @@ const Index = () => {
     const updatedColors = [newColor, ...recentColors.filter((c) => c !== newColor)].slice(0, 10);
     setRecentColors(updatedColors);
     localStorage.setItem("recentColors", JSON.stringify(updatedColors));
+  };
+
+  const handleSelectIcon = (slug: string) => {
+    setSelectedIcons(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(slug)) {
+        newSet.delete(slug);
+      } else {
+        newSet.add(slug);
+      }
+      return newSet;
+    });
   };
 
   const sortedIcons = useMemo(() => {
@@ -97,38 +112,72 @@ const Index = () => {
         </div>
         <h1 className="text-4xl font-bold tracking-tight">Gerador de Ícones Personalizados</h1>
         <p className="text-muted-foreground mt-2">
-          Pesquise um ícone, escolha uma cor e baixe no formato que precisar.
+          Pesquise, selecione, personalize e baixe ícones no formato que precisar.
         </p>
       </header>
 
       <main>
-        <div className="flex flex-col md:flex-row gap-6 mb-8 sticky top-4 z-10 bg-background/80 backdrop-blur-sm p-4 rounded-lg border items-center flex-wrap">
-          <div className="flex-grow w-full md:w-auto">
+        <div className="sticky top-4 z-10 bg-background/80 backdrop-blur-sm p-4 rounded-lg border mb-8 flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row gap-4 items-center">
             <Input
               type="text"
               placeholder="Pesquisar ícones (ex: Spotify, Discord...)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full"
+              className="flex-grow"
             />
+            <div className="flex items-center gap-2">
+              <Label>Ordenar</Label>
+              <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
+                <ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="az" aria-label="Ordenar de A a Z">A-Z</ToggleGroupItem>
+                <ToggleGroupItem value="za" aria-label="Ordenar de Z a A">Z-A</ToggleGroupItem>
+              </ToggleGroup>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Label>Ordenar</Label>
-            <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
-              <ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem>
-              <ToggleGroupItem value="az" aria-label="Ordenar de A a Z">A-Z</ToggleGroupItem>
-              <ToggleGroupItem value="za" aria-label="Ordenar de Z a A">Z-A</ToggleGroupItem>
-            </ToggleGroup>
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex items-center gap-4">
+              <ColorPicker value={color} onChange={setColor} />
+              <Button variant="outline" size="icon" onClick={() => updateRecentColors(color)}>
+                <Bookmark className="h-4 w-4" />
+              </Button>
+              <div className="flex gap-2 flex-wrap">
+                {recentColors.map((recentColor) => (
+                  <button
+                    key={recentColor}
+                    className="w-8 h-8 rounded-full border"
+                    style={{ backgroundColor: recentColor }}
+                    onClick={() => setColor(recentColor)}
+                    aria-label={`Select color ${recentColor}`}
+                  />
+                ))}
+              </div>
+            </div>
+            <PreviewBackgroundSelector value={previewBg} onChange={setPreviewBg} />
           </div>
-          <PreviewBackgroundSelector value={previewBg} onChange={setPreviewBg} />
-          <ColorSelector color={color} setColor={setColor} recentColors={recentColors} />
         </div>
+
+        {selectedIcons.size > 0 && (
+          <BatchDownloader 
+            selectedIcons={selectedIcons} 
+            allIcons={iconList} 
+            color={color}
+            onClear={() => setSelectedIcons(new Set())}
+          />
+        )}
 
         {paginatedIcons.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {paginatedIcons.map((icon) => (
-                <IconCard key={icon.slug} icon={icon} color={color} onColorUse={updateRecentColors} previewBg={previewBg} />
+                <IconCard 
+                  key={icon.slug} 
+                  icon={icon} 
+                  color={color} 
+                  previewBg={previewBg}
+                  isSelected={selectedIcons.has(icon.slug)}
+                  onSelect={handleSelectIcon}
+                />
               ))}
             </div>
             <Pagination className="mt-8">

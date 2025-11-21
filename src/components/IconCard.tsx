@@ -3,6 +3,7 @@ import ICO from 'icojs';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from './ui/checkbox';
 
 interface IconData {
   title: string;
@@ -12,13 +13,14 @@ interface IconData {
 interface IconCardProps {
   icon: IconData;
   color: string;
-  onColorUse: (color: string) => void;
   previewBg: string;
+  isSelected: boolean;
+  onSelect: (slug: string) => void;
 }
 
 const svgCache = new Map<string, string>();
 
-export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse, previewBg }) => {
+export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSelected, onSelect }) => {
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -81,7 +83,6 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse, pre
   };
 
   const handleDownload = async (format: 'svg' | 'png' | 'ico') => {
-    onColorUse(color);
     const coloredSvg = getColoredSvg(svgContent, color);
     if (!coloredSvg) return;
 
@@ -134,9 +135,16 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse, pre
   };
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col relative">
+      <div className="absolute top-3 left-3 z-10">
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onSelect(icon.slug)}
+          aria-label={`Select ${icon.title}`}
+        />
+      </div>
       <CardHeader>
-        <CardTitle className="truncate">{icon.title}</CardTitle>
+        <CardTitle className="truncate pl-8">{icon.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md" style={{ backgroundColor: previewBg }}>
         {loading ? (
