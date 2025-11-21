@@ -3,9 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { IconData } from '@/pages/Index';
 import * as allSimpleIcons from 'simple-icons';
 import { Link, Palette, Hash } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 interface IconInfoCardProps {
   icon: IconData;
+  onColorSelect: (color: string) => void;
 }
 
 // Função para buscar os dados originais do Simple Icon usando o slug
@@ -17,10 +19,17 @@ const getOriginalIconData = (slug: string) => {
   return iconKey ? (allSimpleIcons as any)[iconKey] : null;
 };
 
-export const IconInfoCard: React.FC<IconInfoCardProps> = ({ icon }) => {
+export const IconInfoCard: React.FC<IconInfoCardProps> = ({ icon, onColorSelect }) => {
   const originalData = getOriginalIconData(icon.slug);
   const originalHex = originalData?.hex ? `#${originalData.hex}` : 'N/A';
   const sourceUrl = originalData?.source;
+  const isColorAvailable = originalHex !== 'N/A';
+
+  const handleColorClick = () => {
+    if (isColorAvailable) {
+      onColorSelect(originalHex);
+    }
+  };
 
   return (
     <Card className="w-full flex-grow bg-muted/50 border-none shadow-none">
@@ -32,15 +41,39 @@ export const IconInfoCard: React.FC<IconInfoCardProps> = ({ icon }) => {
           <span className="flex items-center gap-1 text-muted-foreground"><Hash className="h-4 w-4" /> Slug:</span>
           <span className="font-mono text-foreground text-right">{icon.slug}</span>
         </div>
+        
         <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1 text-muted-foreground"><Palette className="h-4 w-4" /> Cor Original:</span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="flex items-center gap-1 text-muted-foreground cursor-default">
+                <Palette className="h-4 w-4" /> Cor:
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Cor Original do Ícone</p>
+            </TooltipContent>
+          </Tooltip>
+          
           <div className="flex items-center gap-2">
             <span className="font-mono text-foreground">{originalHex}</span>
-            {originalHex !== 'N/A' && (
-              <div className="w-4 h-4 rounded-sm border" style={{ backgroundColor: originalHex }}></div>
+            {isColorAvailable && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={handleColorClick}
+                    className="w-4 h-4 rounded-sm border cursor-pointer hover:ring-2 ring-primary transition-all"
+                    style={{ backgroundColor: originalHex }}
+                    aria-label={`Usar cor ${originalHex}`}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Usar Cor Original</p>
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
         </div>
+        
         {sourceUrl && (
           <div className="pt-2 border-t">
             <a 

@@ -142,20 +142,19 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         <div className="flex gap-4 flex-grow min-h-0">
           
           {/* Coluna Esquerda: Preview e Info */}
-          {/* Adicionando flex-grow para que esta coluna ocupe toda a altura disponível */}
           <div className="w-1/4 flex flex-col gap-4 flex-grow"> 
             
-            {/* Painel de Pré-visualização */}
-            <div className="flex flex-col items-center p-4 border rounded-md bg-muted/50 self-start">
+            {/* Painel de Pré-visualização - Agora esticado verticalmente */}
+            <div className="flex flex-col items-center p-4 border rounded-md bg-muted/50 flex-grow justify-center flex-shrink-0">
               <div
                 className="w-24 h-24 mb-4"
                 dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, localColor) }}
               />
-              <p className="mb-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
+              <p className="text-sm text-muted-foreground text-center">Pré-visualização</p>
             </div>
 
-            {/* Nova Card de Informações (agora com flex-grow no componente interno) */}
-            <IconInfoCard icon={icon} />
+            {/* Card de Informações */}
+            <IconInfoCard icon={icon} onColorSelect={setLocalColor} />
           </div>
 
           {/* Visualizador de Código */}
