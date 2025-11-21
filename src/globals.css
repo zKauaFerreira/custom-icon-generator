@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto; /* Define como auto para evitar conflito com Lenis */
   }
   :root {
     --background: 0 0% 100%;

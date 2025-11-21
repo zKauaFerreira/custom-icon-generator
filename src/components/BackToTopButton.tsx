@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { animateScroll as scroll } from 'react-scroll';
+import { useLenis } from './LenisProvider';
 
 export const BackToTopButton = () => {
+  const lenis = useLenis();
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => {
+    // Lenis atualiza window.pageYOffset, então podemos usá-lo
     if (window.pageYOffset > 300) {
       setIsVisible(true);
     } else {
@@ -16,10 +18,10 @@ export const BackToTopButton = () => {
   };
 
   const scrollToTop = () => {
-    scroll.scrollToTop({
-      duration: 500, // Duração da animação em ms
-      smooth: true,
-    });
+    if (lenis) {
+      // Usa o método scrollTo do Lenis
+      lenis.scrollTo(0, { duration: 0.5 });
+    }
   };
 
   useEffect(() => {

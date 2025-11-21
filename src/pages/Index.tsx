@@ -13,6 +13,8 @@ import { BatchDownloaderSheet } from "@/components/BatchDownloaderSheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BackToTopButton } from "@/components/BackToTopButton";
 import { ResolutionDialog } from "@/components/ResolutionDialog";
+import { useLocation } from "react-router-dom";
+import { useLenis } from "@/components/LenisProvider";
 
 export interface IconData {
   title: string;
@@ -65,6 +67,9 @@ const Index = () => {
     return 256; // Fallback padrão
   });
   const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false);
+  
+  const location = useLocation();
+  const lenis = useLenis();
 
   useEffect(() => {
     try {
@@ -76,6 +81,14 @@ const Index = () => {
     }
     setShuffledIcons(shuffleArray(iconList));
   }, []);
+  
+  // Efeito para rolar para o topo em mudanças de rota
+  useEffect(() => {
+    if (lenis) {
+      // Rola para o topo instantaneamente em mudanças de rota
+      lenis.scrollTo(0, { immediate: true });
+    }
+  }, [location.pathname, lenis]);
 
   const updateRecentColors = (newColor: string) => {
     const updatedColors = [newColor, ...recentColors.filter((c) => c !== newColor)].slice(0, 10);
@@ -214,8 +227,8 @@ const Index = () => {
             {/* Direita: Ordenação */}
             <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
               <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem></TooltipTrigger><TooltipContent>Aleatório</TooltipContent></Tooltip>
-              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="az" aria-label="Ordenar de A a Z" className="whitespace-nowrap">A-Z</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética</TooltipContent></Tooltip>
-              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="za" aria-label="Ordenar de Z a A" className="whitespace-nowrap">Z-A</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética Inversa</TooltipContent></Tooltip>
+              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="az" aria-label="Ordenar de A a Z" className="whitespace-nowrap">A-Z</ToggleGroupItem></ToggleGroupTrigger><TooltipContent>Ordem Alfabética</TooltipContent></Tooltip>
+              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="za" aria-label="Ordenar de Z a A" className="whitespace-nowrap">Z-A</ToggleGroupItem></ToggleGroupTrigger><TooltipContent>Ordem Alfabética Inversa</TooltipContent></ToggleGroup>
             </ToggleGroup>
           </div>
         </div>
