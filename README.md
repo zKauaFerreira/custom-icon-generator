@@ -13,7 +13,7 @@ The **Custom Simple Icon Generator** is a fast, responsive web application desig
 
 This tool is packed with functionalities to streamline your icon workflow:
 
-| Icon | Feature | Description |
+| # | Feature | Description |
 | :---: | :--- | :--- |
 | 🎨 | **Dynamic Color Picker** | Instantly apply any hex color to all icons in real-time. |
 | 💾 | **Recent Colors** | Save and quickly reuse your favorite color palettes. |
