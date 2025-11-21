@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import toIco from 'to-ico';
+// Corrigindo a importação para lidar com o módulo CommonJS
+import * as toIcoNs from 'to-ico';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+
+// Helper para obter a função real do módulo CJS importado
+const toIco = (toIcoNs as any).default ?? toIcoNs;
 
 interface IconData {
   title: string;
