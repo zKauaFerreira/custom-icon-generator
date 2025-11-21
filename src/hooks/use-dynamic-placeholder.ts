@@ -1,5 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useLenis } from '@/components/LenisProvider';
+import { useState, useMemo } from 'react';
 import type { IconData } from '@/pages/Index';
 
 // Função utilitária para obter um elemento aleatório de um array
@@ -23,29 +22,15 @@ const generatePlaceholder = (iconList: IconData[]): string => {
 };
 
 /**
- * Hook que retorna um placeholder dinâmico que muda a cada rolagem.
+ * Hook que retorna um placeholder dinâmico que é gerado apenas na montagem do componente.
  * @param iconList A lista completa de dados dos ícones.
  * @returns A string do placeholder dinâmico.
  */
 export function useDynamicPlaceholder(iconList: IconData[]): string {
-  const lenis = useLenis();
-  const [placeholder, setPlaceholder] = useState(() => generatePlaceholder(iconList));
+  // O placeholder é gerado apenas uma vez na inicialização do estado.
+  const [placeholder] = useState(() => generatePlaceholder(iconList));
   
-  // Memoiza a função de geração para evitar recriação desnecessária
-  const updatePlaceholder = useMemo(() => () => {
-    setPlaceholder(generatePlaceholder(iconList));
-  }, [iconList]);
-
-  useEffect(() => {
-    if (!lenis) return;
-
-    // Lenis usa um evento 'scroll' que podemos ouvir
-    lenis.on('scroll', updatePlaceholder);
-
-    return () => {
-      lenis.off('scroll', updatePlaceholder);
-    };
-  }, [lenis, updatePlaceholder]);
+  // O hook não precisa mais do Lenis nem do useEffect, pois não atualiza na rolagem.
   
   return placeholder;
 }
