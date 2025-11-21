@@ -19,7 +19,7 @@ const generatePlaceholder = (iconList: IconData[]): string => {
     icon2 = getRandomElement(iconList);
   }
   
-  return `${icon1.title}, ${icon2.title}...`;
+  return `Pesquisar ícones (ex: ${icon1.title}, ${icon2.title}...)`;
 };
 
 /**
