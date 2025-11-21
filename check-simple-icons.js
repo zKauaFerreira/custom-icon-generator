@@ -6,72 +6,80 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Path do package.json da branch autorun
-const packagePath = path.resolve(__dirname, '../package.json');
+/* =====================================================
+   PATHS DAS DUAS BRANCHES
+===================================================== */
+
+// package.json da autorun (onde o script roda)
+const autorunPackagePath = path.resolve(__dirname, "./package.json");
+
+// package.json da MAIN (passado pelo workflow)
+const mainPath = process.env.MAIN_PATH;
+const mainPackagePath = path.join(mainPath, "package.json");
 
 /* =====================================================
    1. PEGAR VERSÃO MAIS RECENTE DO SIMPLE-ICONS
 ===================================================== */
 async function getLatestVersion() {
     try {
-        const response = await fetch('https://registry.npmjs.org/simple-icons/latest');
+        const response = await fetch("https://registry.npmjs.org/simple-icons/latest");
         const data = await response.json();
         return data.version;
     } catch (e) {
-        console.error('Could not get latest version via API:', e);
+        console.error("Could not get latest version via API:", e);
         return null;
     }
 }
 
 /* =====================================================
-   2. FUNÇÃO PARA FAZER COMMIT NO GITHUB (NA MAIN)
+   2. FAZER O COMMIT NA MAIN
 ===================================================== */
-async function commitToGitHub(updatedContent) {
+async function commitToGitHub(updatedContentMain) {
     const token = process.env.PAT_TOKEN;
     const owner = process.env.REPO_OWNER;
     const repo = process.env.REPO_NAME;
-    const branch = process.env.TARGET_BRANCH; // normalmente "main"
+    const branch = process.env.TARGET_BRANCH; // normalmente main
 
     if (!token || !owner || !repo || !branch) {
-        console.error("Missing environment variables for GitHub commit");
+        console.error("❌ Missing environment variables for GitHub commit");
         return;
     }
 
     const apiBase = `https://api.github.com/repos/${owner}/${repo}`;
 
-    // 1. pega o último commit da main
+    // 1. pegar último commit da main
     const refRes = await fetch(`${apiBase}/git/ref/heads/${branch}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     const refData = await refRes.json();
     const latestCommitSha = refData.object.sha;
 
-    // 2. pega commit para achar a tree
+    // 2. pegar commit para extrair a tree
     const commitRes = await fetch(`${apiBase}/git/commits/${latestCommitSha}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     const commitData = await commitRes.json();
 
-    // 3. cria blob com novo package.json
+    // 3. criar blob com novo package.json
     const blobRes = await fetch(`${apiBase}/git/blobs`, {
-        method: 'POST',
+        method: "POST",
         headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            content: updatedContent,
-            encoding: 'utf-8'
+            content: updatedContentMain,
+            encoding: "utf-8"
         })
     });
     const blobData = await blobRes.json();
 
-    // 4. nova tree
+    // 4. criar nova tree
     const treeRes = await fetch(`${apiBase}/git/trees`, {
-        method: 'POST',
+        method: "POST",
         headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
             base_tree: commitData.tree.sha,
@@ -87,12 +95,12 @@ async function commitToGitHub(updatedContent) {
     });
     const treeData = await treeRes.json();
 
-    // 5. faz commit
+    // 5. criar commit
     const newCommitRes = await fetch(`${apiBase}/git/commits`, {
-        method: 'POST',
+        method: "POST",
         headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
             message: "chore: auto-update simple-icons version",
@@ -102,12 +110,12 @@ async function commitToGitHub(updatedContent) {
     });
     const newCommitData = await newCommitRes.json();
 
-    // 6. atualiza ponteiro da branch main
+    // 6. mover ponteiro da main
     await fetch(`${apiBase}/git/refs/heads/${branch}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
             sha: newCommitData.sha
@@ -121,30 +129,42 @@ async function commitToGitHub(updatedContent) {
    3. LÓGICA PRINCIPAL
 ===================================================== */
 async function main() {
-    const raw = await fs.readFile(packagePath, 'utf8');
-    const packageJson = JSON.parse(raw);
+    // === LER AMBOS PACKAGE.JSON ===
+    const autorunRaw = await fs.readFile(autorunPackagePath, "utf8");
+    const mainRaw = await fs.readFile(mainPackagePath, "utf8");
 
-    const currentVersion = packageJson.dependencies['simple-icons'].replace(/[\^~]/g, '');
+    const autorunPackage = JSON.parse(autorunRaw);
+    const mainPackage = JSON.parse(mainRaw);
+
+    // versão que está NO SITE (main)
+    const currentVersion = (mainPackage.dependencies["simple-icons"] || "").replace(/[\^~]/g, "");
+
+    // versão mais recente no npm
     const latestVersion = await getLatestVersion();
-
     if (!latestVersion) {
-        console.log("Failed to get latest version. Abort.");
+        console.log("❌ Failed to get latest version. Abort.");
         return;
     }
 
-    console.log("Current:", currentVersion, " | Latest:", latestVersion);
+    console.log("Current:", currentVersion, "| Latest:", latestVersion);
 
+    // === COMPARAÇÃO ===
     if (currentVersion !== latestVersion) {
         console.log(`🚨 Nova versão detectada! Atualizando para ^${latestVersion}`);
 
-        packageJson.dependencies['simple-icons'] = `^${latestVersion}`;
-        const updatedContent = JSON.stringify(packageJson, null, 2) + "\n";
+        // atualizar na main
+        mainPackage.dependencies["simple-icons"] = `^${latestVersion}`;
+        const updatedMainContent = JSON.stringify(mainPackage, null, 2) + "\n";
 
-        // atualiza localmente na autorun
-        await fs.writeFile(packagePath, updatedContent);
+        // atualizar localmente na autorun (opcional)
+        autorunPackage.dependencies["simple-icons"] = `^${latestVersion}`;
+        const updatedAutorunContent = JSON.stringify(autorunPackage, null, 2) + "\n";
 
-        // commit na main
-        await commitToGitHub(updatedContent);
+        await fs.writeFile(mainPackagePath, updatedMainContent);
+        await fs.writeFile(autorunPackagePath, updatedAutorunContent);
+
+        // commit NA MAIN
+        await commitToGitHub(updatedMainContent);
 
         process.exit(1);
     } else {
