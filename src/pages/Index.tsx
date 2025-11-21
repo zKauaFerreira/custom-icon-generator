@@ -29,7 +29,7 @@ const Index = () => {
       if (storedColors) {
         setRecentColors(JSON.parse(storedColors));
       }
-    } catch (error)
+    } catch (error) {
       console.error("Failed to parse recent colors from localStorage", error);
       localStorage.removeItem("recentColors");
     }
