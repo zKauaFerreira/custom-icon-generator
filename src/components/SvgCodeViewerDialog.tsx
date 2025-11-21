@@ -6,13 +6,11 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, Download, Image } from "lucide-react";
+import { Copy, Download } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
 import { showSuccess, showError } from "@/utils/toast";
 import { IconData } from "@/pages/Index";
-import { svgToPng } from "@/lib/image-converter";
 import { saveAs } from "file-saver";
-import { cn } from "@/lib/utils";
 
 interface SvgCodeViewerDialogProps {
   open: boolean;
@@ -76,18 +74,6 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
     }
   };
 
-  const handleDownloadPng = async () => {
-    try {
-      const blob = await svgToPng(svgContent, resolution, color);
-      const cleanColor = color.substring(1);
-      saveAs(blob, `${icon.slug}-${cleanColor}-${resolution}x${resolution}.png`);
-      showSuccess("Download PNG iniciado!");
-    } catch (error) {
-      console.error('Failed to download PNG:', error);
-      showError("Falha ao baixar o PNG.");
-    }
-  };
-
   const handleDownloadSvg = () => {
     try {
       const cleanColor = color.substring(1);
@@ -138,15 +124,11 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline" onClick={handleDownloadSvg}>
+          <Button onClick={handleDownloadSvg}>
             <Download className="h-4 w-4 mr-2" />
             Baixar SVG
           </Button>
-          <Button variant="outline" onClick={handleDownloadPng}>
-            <Image className="h-4 w-4 mr-2" />
-            Baixar PNG ({resolution}x{resolution})
-          </Button>
-          <Button onClick={handleCopySvg}>
+          <Button variant="outline" onClick={handleCopySvg}>
             <Copy className="h-4 w-4 mr-2" />
             Copiar Código SVG
           </Button>

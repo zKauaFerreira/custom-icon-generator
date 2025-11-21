@@ -104,8 +104,10 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
         const coloredSvg = serializer.serializeToString(doc.documentElement);
         blob = new Blob([coloredSvg], { type: 'image/svg+xml;charset=utf-8' });
       } else if (format === 'png') {
-        blob = await svgToPng(svgContent, resolution, color); // Usando a resolução
+        // PNG usa a resolução
+        blob = await svgToPng(svgContent, resolution, color); 
       } else { // ico
+        // ICO usa a resolução (embora a função interna possa gerar múltiplas)
         blob = await svgToIco(svgContent, color);
       }
       
@@ -125,8 +127,9 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
 
   return (
     <>
-      <Card className="flex flex-col relative bg-card cursor-pointer transition-shadow hover:shadow-lg" onClick={() => svgContent && setIsCodeViewerOpen(true)}>
-        <div className="absolute top-3 right-3 z-10" onClick={(e) => e.stopPropagation()}>
+      {/* Removendo o onClick principal do Card */}
+      <Card className="flex flex-col relative bg-card transition-shadow hover:shadow-lg">
+        <div className="absolute top-3 right-3 z-10">
           <Tooltip>
             <TooltipTrigger asChild>
               <Checkbox
@@ -166,12 +169,20 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
             <div className="w-16 h-16 bg-destructive/20 rounded-md" />
           )}
         </CardContent>
-        <CardFooter className="flex flex-wrap justify-center gap-2" onClick={(e) => e.stopPropagation()}>
+        <CardFooter className="flex flex-wrap justify-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button size="sm" variant="outline" onClick={() => handleDownload('svg')} disabled={loading || !svgContent}>SVG</Button>
+              {/* Adicionando o onClick para abrir o modal aqui */}
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={() => svgContent && setIsCodeViewerOpen(true)} 
+                disabled={loading || !svgContent}
+              >
+                SVG
+              </Button>
             </TooltipTrigger>
-            <TooltipContent><p>Baixar como SVG</p></TooltipContent>
+            <TooltipContent><p>Visualizar Código / Baixar SVG</p></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
