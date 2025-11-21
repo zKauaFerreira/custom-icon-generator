@@ -143,7 +143,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
               TitleComponent
             )}
           </div>
-          <div className="flex-shrink-0 ml-2 pt-1">
+          <div className="flex-shrink-0 ml-2"> {/* Removed pt-1 here */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Checkbox
