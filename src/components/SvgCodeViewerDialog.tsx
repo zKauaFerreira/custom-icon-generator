@@ -142,7 +142,8 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         <div className="flex gap-4 flex-grow min-h-0">
           
           {/* Coluna Esquerda: Preview e Info */}
-          <div className="w-1/4 flex flex-col gap-4">
+          {/* Adicionando flex-grow para que esta coluna ocupe toda a altura disponível */}
+          <div className="w-1/4 flex flex-col gap-4 flex-grow"> 
             
             {/* Painel de Pré-visualização */}
             <div className="flex flex-col items-center p-4 border rounded-md bg-muted/50 self-start">
@@ -153,7 +154,7 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
               <p className="mb-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
             </div>
 
-            {/* Nova Card de Informações */}
+            {/* Nova Card de Informações (agora com flex-grow no componente interno) */}
             <IconInfoCard icon={icon} />
           </div>
 

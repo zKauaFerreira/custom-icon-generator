@@ -23,14 +23,14 @@ export const IconInfoCard: React.FC<IconInfoCardProps> = ({ icon }) => {
   const sourceUrl = originalData?.source;
 
   return (
-    <Card className="w-full">
+    <Card className="w-full flex-grow bg-muted/50 border-none shadow-none">
       <CardHeader className="p-4 pb-2">
-        <CardTitle className="text-lg">Informações do Ícone</CardTitle>
+        <CardTitle className="text-lg">Informações</CardTitle>
       </CardHeader>
       <CardContent className="p-4 pt-2 text-sm space-y-2">
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-1 text-muted-foreground"><Hash className="h-4 w-4" /> Slug:</span>
-          <span className="font-mono text-foreground">{icon.slug}</span>
+          <span className="font-mono text-foreground text-right">{icon.slug}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-1 text-muted-foreground"><Palette className="h-4 w-4" /> Cor Original:</span>
@@ -50,7 +50,7 @@ export const IconInfoCard: React.FC<IconInfoCardProps> = ({ icon }) => {
               className="text-primary hover:underline flex items-center gap-1 text-xs"
             >
               <Link className="h-4 w-4" />
-              Ver Fonte Original
+              Fonte Original
             </a>
           </div>
         )}
