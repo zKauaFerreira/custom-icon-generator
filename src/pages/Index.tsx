@@ -52,7 +52,7 @@ const Index = () => {
   const [shuffledIcons, setShuffledIcons] = useState<IconData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<'random' | 'az' | 'za'>('random');
-  const [selectedIcons, setSelectedIcons] = new Set<string>());
+  const [selectedIcons, setSelectedIcons] = useState(new Set<string>());
   const [resolution, setResolution] = useState(() => {
     // Inicializa a resolução a partir do localStorage
     if (typeof window !== 'undefined') {
