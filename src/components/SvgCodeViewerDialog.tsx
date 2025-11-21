@@ -6,11 +6,14 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, Download } from "lucide-react";
+import { Copy, Download, Palette } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
 import { showSuccess, showError } from "@/utils/toast";
 import { IconData } from "@/pages/Index";
 import { saveAs } from "file-saver";
+import React, { useState, useMemo, useEffect } from "react";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 interface SvgCodeViewerDialogProps {
   open: boolean;
@@ -60,9 +63,21 @@ const getColoredSvgString = (svgText: string, color: string): string => {
 
 
 export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, onOpenChange, icon, svgContent, color, resolution }) => {
-  
-  const coloredSvgString = getColoredSvgString(svgContent, color);
-  const formattedHtml = formatAndColorizeSvg(svgContent, color);
+  // Estado local para a cor, inicializado com a cor da prop
+  const [localColor, setLocalColor] = useState(color);
+
+  // Resetar a cor local quando o modal abrir ou a cor da prop mudar
+  useEffect(() => {
+    setLocalColor(color);
+  }, [color, open]);
+
+  // Recalcula o SVG colorido e formatado apenas quando o svgContent ou localColor mudar
+  const { coloredSvgString, formattedHtml } = useMemo(() => {
+    const coloredSvgString = getColoredSvgString(svgContent, localColor);
+    const formattedHtml = formatAndColorizeSvg(svgContent, localColor);
+    return { coloredSvgString, formattedHtml };
+  }, [svgContent, localColor]);
+
 
   const handleCopySvg = async () => {
     try {
@@ -76,7 +91,8 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
 
   const handleDownloadSvg = () => {
     try {
-      const cleanColor = color.substring(1);
+      // Usa a cor local para o nome do arquivo e o conteúdo
+      const cleanColor = localColor.substring(1);
       const blob = new Blob([coloredSvgString], { type: 'image/svg+xml;charset=utf-8' });
       saveAs(blob, `${icon.slug}-${cleanColor}.svg`);
       showSuccess("Download SVG iniciado!");
@@ -94,23 +110,45 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
             Visualizar Código SVG: {icon.title}
             <div 
               className="w-6 h-6 rounded-full border border-border" 
-              style={{ backgroundColor: color }} 
-              title={`Cor: ${color}`}
+              style={{ backgroundColor: localColor }} 
+              title={`Cor: ${localColor}`}
             />
           </DialogTitle>
           <DialogDescription>
-            Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold">{color}</span>).
+            Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold">{localColor}</span>).
           </DialogDescription>
         </DialogHeader>
         
         <div className="flex gap-4 flex-grow min-h-0">
-          {/* Pré-visualização do Ícone */}
-          <div className="w-1/4 flex flex-col items-center justify-center p-4 border rounded-md bg-muted/50">
+          {/* Painel de Controle de Cor */}
+          <div className="w-1/4 flex flex-col items-center p-4 border rounded-md bg-muted/50">
             <div
-              className="w-24 h-24"
-              dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, color) }}
+              className="w-24 h-24 mb-4"
+              dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, localColor) }}
             />
-            <p className="mt-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
+            <p className="mb-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
+
+            <div className="w-full space-y-2">
+                <Label htmlFor="color-picker" className="flex items-center gap-2 text-sm font-medium">
+                    <Palette className="h-4 w-4" /> Alterar Cor
+                </Label>
+                <div className="flex gap-2">
+                    <Input 
+                        id="color-picker"
+                        type="color" 
+                        value={localColor} 
+                        onChange={(e) => setLocalColor(e.target.value)}
+                        className="h-10 w-10 p-0 cursor-pointer"
+                        style={{ backgroundColor: localColor }}
+                    />
+                    <Input 
+                        type="text" 
+                        value={localColor} 
+                        onChange={(e) => setLocalColor(e.target.value)}
+                        className="flex-grow font-mono text-center"
+                    />
+                </div>
+            </div>
           </div>
 
           {/* Visualizador de Código */}
