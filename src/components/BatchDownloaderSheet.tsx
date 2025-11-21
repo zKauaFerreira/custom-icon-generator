@@ -10,13 +10,15 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from '@/components/ui/button';
-import { Download, FileArchive, Trash2 } from 'lucide-react';
+import { Download, FileArchive, Trash2, X } from 'lucide-react';
 import type { IconData } from '@/pages/Index';
 import { showError, showLoading, showSuccess, dismissToast } from '@/utils/toast';
 import { ScrollArea } from './ui/scroll-area';
 import { SelectedIconItem } from './SelectedIconItem';
 import { DownloadFormatDialog, DownloadFormat } from './DownloadFormatDialog';
 import { svgToPng, svgToIco } from '@/lib/image-converter';
+import { ClearSelectionDialog } from './ClearSelectionDialog';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 interface BatchDownloaderSheetProps {
   selectedIcons: Set<string>;
@@ -29,6 +31,7 @@ interface BatchDownloaderSheetProps {
 export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ selectedIcons, allIcons, color, onClear, onRemoveIcon }) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
 
   const selectedIconsDetails = allIcons.filter(icon => selectedIcons.has(icon.slug));
 
@@ -82,6 +85,11 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
     }
   };
 
+  const handleConfirmClear = () => {
+    onClear();
+    setIsClearDialogOpen(false);
+  };
+
   if (selectedIcons.size <= 1) {
     return null;
   }
@@ -90,9 +98,27 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <Button className="fixed bottom-8 right-8 z-50 h-14 rounded-full shadow-lg flex items-center gap-3 px-6 animate-in fade-in-90 slide-in-from-bottom-10 duration-300">
+          <Button className="fixed bottom-8 right-8 z-50 h-14 rounded-full shadow-lg flex items-center gap-3 px-6 animate-in fade-in-90 slide-in-from-bottom-10 duration-300 relative group">
             <FileArchive className="h-6 w-6" />
             <span className="text-lg font-semibold">{selectedIcons.size} selecionado(s)</span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setIsClearDialogOpen(true);
+                  }}
+                  className="absolute -top-1 -right-1 bg-card border rounded-full p-1 hidden group-hover:flex items-center justify-center animate-in fade-in-50"
+                  aria-label="Limpar seleção"
+                >
+                  <X className="h-4 w-4" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Limpar seleção</p>
+              </TooltipContent>
+            </Tooltip>
           </Button>
         </SheetTrigger>
         <SheetContent className="w-[400px] sm:w-[540px] flex flex-col" side="right">
@@ -114,7 +140,7 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
               <Download className="h-4 w-4 mr-2" />
               Baixar ZIP
             </Button>
-            <Button variant="outline" onClick={onClear} disabled={isDownloading}>
+            <Button variant="outline" onClick={() => setIsClearDialogOpen(true)} disabled={isDownloading}>
               <Trash2 className="h-4 w-4 mr-2" />
               Limpar
             </Button>
@@ -126,6 +152,12 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
         onOpenChange={setIsDialogOpen}
         onDownload={handleDownloadZip}
         isDownloading={isDownloading}
+      />
+      <ClearSelectionDialog
+        open={isClearDialogOpen}
+        onOpenChange={setIsClearDialogOpen}
+        onConfirm={handleConfirmClear}
+        iconCount={selectedIcons.size}
       />
     </>
   );
