@@ -140,7 +140,7 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         
         <div className="flex gap-4 flex-grow min-h-0">
           {/* Painel de Pré-visualização */}
-          <div className="w-1/4 flex flex-col items-center p-4 border rounded-md bg-muted/50">
+          <div className="w-1/4 flex flex-col items-center p-4 border rounded-md bg-muted/50 self-start">
             <div
               className="w-24 h-24 mb-4"
               dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, localColor) }}
