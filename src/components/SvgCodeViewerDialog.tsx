@@ -114,22 +114,15 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
           <DialogTitle className="flex items-center gap-3">
             Visualizar Código SVG: {icon.title}
             
-            {/* Color Picker Integrado com Tooltip */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="h-6 w-6">
-                  <ColorPicker 
-                      value={localColor} 
-                      onChange={setLocalColor}
-                      size="sm"
-                      className="h-6 w-6"
-                  />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Alterar Cor ({localColor})</p>
-              </TooltipContent>
-            </Tooltip>
+            {/* Color Picker Integrado */}
+            <div className="h-6 w-6">
+              <ColorPicker 
+                  value={localColor} 
+                  onChange={setLocalColor}
+                  size="sm"
+                  className="h-6 w-6"
+              />
+            </div>
           </DialogTitle>
           <DialogDescription>
             Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold" style={{ color: localColor }}>{localColor}</span>).
