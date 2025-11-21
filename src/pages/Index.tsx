@@ -15,6 +15,7 @@ import { BackToTopButton } from "@/components/BackToTopButton";
 import { ResolutionDialog } from "@/components/ResolutionDialog";
 import { useLocation } from "react-router-dom";
 import { useLenis } from "@/components/LenisProvider";
+import { useDynamicPlaceholder } from "@/hooks/use-dynamic-placeholder"; // Importando o novo hook
 
 export interface IconData {
   title: string;
@@ -68,8 +69,10 @@ const Index = () => {
   });
   const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false);
   
-  const location = useLocation();
   const lenis = useLenis();
+  
+  // --- Novo Hook para Placeholder Dinâmico ---
+  const dynamicPlaceholder = useDynamicPlaceholder(iconList);
 
   useEffect(() => {
     try {
@@ -169,7 +172,7 @@ const Index = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Pesquisar ícones (ex: Spotify, Discord...)"
+              placeholder={dynamicPlaceholder} // Usando o placeholder dinâmico
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
