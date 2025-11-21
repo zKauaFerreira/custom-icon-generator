@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Checkbox } from './ui/checkbox';
+import { Checkbox } from '@/components/ui/checkbox';
 import { svgToPng, svgToIco } from '@/lib/image-converter';
 import { showError } from '@/utils/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
