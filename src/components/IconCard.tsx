@@ -114,7 +114,14 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onS
         </Tooltip>
       </div>
       <CardHeader>
-        <CardTitle className="truncate pr-8 leading-normal">{icon.title}</CardTitle>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <CardTitle className="truncate pr-8 leading-normal">{icon.title}</CardTitle>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{icon.title}</p>
+          </TooltipContent>
+        </Tooltip>
       </CardHeader>
       <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md">
         {loading ? (
