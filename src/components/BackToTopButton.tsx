@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { animateScroll as scroll } from 'react-scroll';
 
 export const BackToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -15,9 +16,9 @@ export const BackToTopButton = () => {
   };
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
+    scroll.scrollToTop({
+      duration: 500, // Duração da animação em ms
+      smooth: true,
     });
   };
 
