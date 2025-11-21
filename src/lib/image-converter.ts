@@ -9,14 +9,16 @@ import ICO from 'icojs';
  * @returns Uma string Data URL devidamente formatada e codificada.
  */
 const svgTextToDataUrl = (svgText: string, size: number): string => {
-  // 1. Adiciona os atributos de largura e altura sem remover os existentes.
-  // A regex captura os atributos existentes para preservá-los.
-  let finalSvg = svgText.replace(
+  // 1. Sanitização: Remove quebras de linha e tabs que podem quebrar a codificação.
+  const sanitizedSvg = svgText.replace(/(\r\n|\n|\r)/gm, "").replace(/>\s+</g, "><").trim();
+
+  // 2. Adiciona os atributos de largura e altura sem remover os existentes.
+  let finalSvg = sanitizedSvg.replace(
     /<svg(.*?)>/,
     `<svg width="${size}" height="${size}"$1>`
   );
 
-  // 2. Garante que o atributo xmlns esteja presente, pois é crucial para a renderização.
+  // 3. Garante que o atributo xmlns esteja presente, pois é crucial para a renderização.
   if (!finalSvg.includes('xmlns="http://www.w3.org/2000/svg"')) {
     finalSvg = finalSvg.replace(
       /<svg(.*?)>/,
@@ -24,7 +26,7 @@ const svgTextToDataUrl = (svgText: string, size: number): string => {
     );
   }
 
-  // 3. Usa o padrão btoa(unescape(encodeURIComponent(...))) para uma codificação
+  // 4. Usa o padrão btoa(unescape(encodeURIComponent(...))) para uma codificação
   //    robusta de UTF-8 para Base64. Isso lida com caracteres especiais corretamente.
   const encodedSvg = btoa(unescape(encodeURIComponent(finalSvg)));
 
