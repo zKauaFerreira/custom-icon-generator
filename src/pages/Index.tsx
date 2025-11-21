@@ -121,22 +121,15 @@ const Index = () => {
 
       <main>
         <div className="bg-background/80 backdrop-blur-sm p-4 rounded-lg border mb-8 flex flex-col gap-4">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="relative flex-grow w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Pesquisar ícones (ex: Spotify, Discord...)"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
-              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem></TooltipTrigger><TooltipContent>Aleatório</TooltipContent></Tooltip>
-              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="az" aria-label="Ordenar de A a Z">A-Z</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética</TooltipContent></Tooltip>
-              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="za" aria-label="Ordenar de Z a A">Z-A</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética Inversa</TooltipContent></Tooltip>
-            </ToggleGroup>
+          <div className="relative flex-grow w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Pesquisar ícones (ex: Spotify, Discord...)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
           </div>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex items-center gap-2">
@@ -163,6 +156,11 @@ const Index = () => {
                 ))}
               </div>
             </div>
+            <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
+              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem></TooltipTrigger><TooltipContent>Aleatório</TooltipContent></Tooltip>
+              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="az" aria-label="Ordenar de A a Z" className="whitespace-nowrap">A-Z</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética</TooltipContent></Tooltip>
+              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="za" aria-label="Ordenar de Z a A" className="whitespace-nowrap">Z-A</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética Inversa</TooltipContent></Tooltip>
+            </ToggleGroup>
           </div>
         </div>
 
