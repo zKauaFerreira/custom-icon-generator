@@ -1,0 +1,46 @@
+name: Check simple-icons Version
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # 00:00 BRT
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout da branch autorun (onde está o script e o package.json usado para instalar)
+      - name: Checkout autorun branch
+        uses: actions/checkout@v3
+        with:
+          ref: autorun
+          path: autorun   # ← DIRETÓRIO SEPARADO
+
+      # 2️⃣ Checkout da branch main (onde está o site e o package.json REAL que será atualizado)
+      - name: Checkout main branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ secrets.TARGET_BRANCH }}
+          path: main      # ← DIRETÓRIO SEPARADO
+
+      # 3️⃣ Node
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 4️⃣ instalar dependências da autorun
+      - name: Install dependencies from autorun
+        working-directory: ./autorun
+        run: npm install
+
+      # 5️⃣ Rodar script
+      - name: Run update script
+        working-directory: ./autorun
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          REPO_OWNER: ${{ secrets.REPO_OWNER }}
+          REPO_NAME: ${{ secrets.REPO_NAME }}
+          TARGET_BRANCH: ${{ secrets.TARGET_BRANCH }}   # ← agora usa o secret
+        run: node check-simple-icons.js
