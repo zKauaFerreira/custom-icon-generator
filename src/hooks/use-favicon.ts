@@ -31,20 +31,21 @@ export function useFavicon(color: string) {
     }
 
     // 1. Find or create the dynamic favicon link element
-    // We use a data attribute to reliably find the link we created.
     let link: HTMLLinkElement | null = document.querySelector("link[rel='icon'][data-dynamic='true']") as HTMLLinkElement;
     
     if (!link) {
-      // Remove any existing default favicon links (like the static favicon.ico) to prevent conflicts
+      // If the dynamic link doesn't exist, remove any existing default favicon links 
+      // (this is crucial if the browser cached a static one)
       document.querySelectorAll("link[rel*='icon']").forEach(existingLink => {
         if (!existingLink.getAttribute('data-dynamic')) {
           existingLink.remove();
         }
       });
       
+      // Create the dynamic link if it wasn't found (should be found now due to index.html change)
       link = document.createElement('link');
       link.rel = 'icon';
-      link.type = 'image/png'; // Explicitly set type for better browser handling
+      link.type = 'image/png'; // Explicitly set type
       link.setAttribute('data-dynamic', 'true'); // Mark as dynamic link
       document.getElementsByTagName('head')[0].appendChild(link);
     }
