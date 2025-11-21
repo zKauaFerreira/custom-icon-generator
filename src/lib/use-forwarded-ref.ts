@@ -1,16 +1,23 @@
-import { forwardRef, useRef, useEffect } from 'react';
+import { Ref, useRef, useEffect } from 'react';
 
-export function useForwardedRef<T>(ref: React.ForwardedRef<T>) {
-  const innerRef = useRef<T>(null);
+/**
+ * Hook to handle forwarded refs, allowing the component to use a local ref
+ * while also respecting the ref passed down from the parent.
+ * @param forwardedRef The ref passed down from the parent component.
+ * @returns A local ref object.
+ */
+export function useForwardedRef<T>(forwardedRef: Ref<T>) {
+  const localRef = useRef<T>(null);
 
   useEffect(() => {
-    if (!ref) return;
-    if (typeof ref === 'function') {
-      ref(innerRef.current);
+    if (!forwardedRef) return;
+
+    if (typeof forwardedRef === 'function') {
+      forwardedRef(localRef.current);
     } else {
-      ref.current = innerRef.current;
+      (forwardedRef as React.MutableRefObject<T | null>).current = localRef.current;
     }
   });
 
-  return innerRef;
+  return localRef;
 }

@@ -6,14 +6,15 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, Download } from "lucide-react";
+import { Copy, Download, Palette } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
 import { showSuccess, showError } from "@/utils/toast";
 import { IconData } from "@/pages/Index";
 import { saveAs } from "file-saver";
 import React, { useState, useMemo, useEffect } from "react";
 import { Input } from "./ui/input";
-// Removendo Label, Palette, pois o painel lateral foi removido
+import { Label } from "./ui/label";
+import { ColorPicker } from "./ColorPicker"; // Importando o novo componente
 
 interface SvgCodeViewerDialogProps {
   open: boolean;
@@ -108,42 +109,29 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             Visualizar Código SVG: {icon.title}
-            
-            {/* Seletor de Cor Integrado */}
-            <div 
-              className="relative w-6 h-6 rounded-full border border-border cursor-pointer group" 
-              style={{ backgroundColor: localColor }} 
-              title={`Cor: ${localColor} (Clique para alterar)`}
-            >
-                <Input 
-                    type="color" 
-                    value={localColor} 
-                    onChange={(e) => setLocalColor(e.target.value)}
-                    className="absolute inset-0 opacity-0 cursor-pointer p-0 h-full w-full"
-                />
-            </div>
           </DialogTitle>
           <DialogDescription>
-            Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold">{localColor}</span>).
+            Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold" style={{ color: localColor }}>{localColor}</span>).
           </DialogDescription>
         </DialogHeader>
         
         <div className="flex gap-4 flex-grow min-h-0">
-          {/* Pré-visualização e Código */}
-          
-          {/* Painel de Pré-visualização */}
+          {/* Painel de Pré-visualização e Controle de Cor */}
           <div className="w-1/4 flex flex-col items-center p-4 border rounded-md bg-muted/50">
             <div
               className="w-24 h-24 mb-4"
               dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, localColor) }}
             />
             <p className="mb-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
-            <div className="w-full space-y-2">
-                <Input 
-                    type="text" 
+
+            <div className="w-full space-y-2 flex flex-col items-center">
+                <Label htmlFor="color-picker" className="flex items-center gap-2 text-sm font-medium">
+                    <Palette className="h-4 w-4" /> Alterar Cor
+                </Label>
+                <ColorPicker 
                     value={localColor} 
-                    onChange={(e) => setLocalColor(e.target.value)}
-                    className="flex-grow font-mono text-center"
+                    onChange={setLocalColor}
+                    className="w-full"
                 />
             </div>
           </div>

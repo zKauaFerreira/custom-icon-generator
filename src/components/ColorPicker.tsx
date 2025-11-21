@@ -17,15 +17,11 @@ interface ColorPickerProps {
   value: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
-  disabled?: boolean;
-  name?: string;
-  className?: string;
-  size?: ButtonProps['size'];
 }
 
 const ColorPicker = forwardRef<
   HTMLInputElement,
-  ColorPickerProps & Omit<ButtonProps, keyof ColorPickerProps>
+  Omit<ButtonProps, 'value' | 'onChange' | 'onBlur'> & ColorPickerProps & ButtonProps
 >(
   (
     { disabled, value, onChange, onBlur, name, className, size, ...props },
@@ -35,7 +31,11 @@ const ColorPicker = forwardRef<
     const [open, setOpen] = useState(false);
 
     const parsedValue = useMemo(() => {
-      return value || '#FFFFFF';
+      // Garante que o valor seja um hex válido, ou usa branco como fallback
+      if (value && /^#([0-9A-F]{3}){1,2}$/i.test(value)) {
+        return value;
+      }
+      return '#000000'; // Usando preto como fallback, já que a maioria dos ícones é preta
     }, [value]);
 
     return (
@@ -43,7 +43,7 @@ const ColorPicker = forwardRef<
         <PopoverTrigger asChild disabled={disabled} onBlur={onBlur}>
           <Button
             {...props}
-            className={cn('w-10 h-10 p-0 border', className)}
+            className={cn('block h-10 w-10 p-0 border-2', className)}
             name={name}
             onClick={() => {
               setOpen(true);
@@ -54,10 +54,10 @@ const ColorPicker = forwardRef<
             }}
             variant='outline'
           >
-            <div />
+            <div className="w-full h-full rounded-sm" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='w-auto p-2 space-y-2'>
+        <PopoverContent className='w-full p-3 space-y-2'>
           <HexColorPicker color={parsedValue} onChange={onChange} />
           <Input
             maxLength={7}
@@ -66,6 +66,7 @@ const ColorPicker = forwardRef<
             }}
             ref={ref}
             value={parsedValue}
+            className="font-mono text-center"
           />
         </PopoverContent>
       </Popover>
