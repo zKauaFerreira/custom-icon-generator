@@ -6,15 +6,19 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, Download, Palette } from "lucide-react";
+import { Copy, Download } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
 import { showSuccess, showError } from "@/utils/toast";
 import { IconData } from "@/pages/Index";
 import { saveAs } from "file-saver";
 import React, { useState, useMemo, useEffect } from "react";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { ColorPicker } from "./ColorPicker"; // Importando o novo componente
+import { ColorPicker } from "./ColorPicker";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface SvgCodeViewerDialogProps {
   open: boolean;
@@ -109,6 +113,25 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             Visualizar Código SVG: {icon.title}
+            
+            {/* Color Picker Integrado com Tooltip */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="h-6 w-6">
+                    <ColorPicker 
+                        value={localColor} 
+                        onChange={setLocalColor}
+                        size="sm"
+                        className="h-6 w-6"
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Alterar Cor ({localColor})</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </DialogTitle>
           <DialogDescription>
             Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold" style={{ color: localColor }}>{localColor}</span>).
@@ -116,24 +139,13 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         </DialogHeader>
         
         <div className="flex gap-4 flex-grow min-h-0">
-          {/* Painel de Pré-visualização e Controle de Cor */}
+          {/* Painel de Pré-visualização */}
           <div className="w-1/4 flex flex-col items-center p-4 border rounded-md bg-muted/50">
             <div
               className="w-24 h-24 mb-4"
               dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, localColor) }}
             />
             <p className="mb-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
-
-            <div className="w-full space-y-2 flex flex-col items-center">
-                <Label htmlFor="color-picker" className="flex items-center gap-2 text-sm font-medium">
-                    <Palette className="h-4 w-4" /> Alterar Cor
-                </Label>
-                <ColorPicker 
-                    value={localColor} 
-                    onChange={setLocalColor}
-                    className="w-full"
-                />
-            </div>
           </div>
 
           {/* Visualizador de Código */}
