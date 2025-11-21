@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { IconData } from '@/data/icons';
 import { Skeleton } from "@/components/ui/skeleton";
+
+interface IconData {
+  title: string;
+  slug: string;
+}
 
 interface IconCardProps {
   icon: IconData;
