@@ -80,15 +80,9 @@ const Index = () => {
       } else {
         newSet.add(slug);
       }
-      // Garante que o React veja uma nova referência de objeto
-      return new Set(newSet);
+      return newSet;
     });
   };
-
-  // Log de depuração para verificar o tamanho da seleção
-  useEffect(() => {
-    console.log("Selected Icons Size:", selectedIcons.size);
-  }, [selectedIcons]);
 
   const sortedIcons = useMemo(() => {
     const icons = [...shuffledIcons];
