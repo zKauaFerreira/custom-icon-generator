@@ -13,6 +13,8 @@ import { Button } from '@/components/ui/button';
 import { Download, FileArchive, Trash2 } from 'lucide-react';
 import type { IconData } from '@/pages/Index';
 import { showError, showLoading, showSuccess, dismissToast } from '@/utils/toast';
+import { ScrollArea } from './ui/scroll-area';
+import { SelectedIconItem } from './SelectedIconItem';
 
 interface BatchDownloaderSheetProps {
   selectedIcons: Set<string>;
@@ -79,13 +81,13 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
             Revise sua seleção e baixe todos os ícones de uma vez.
           </SheetDescription>
         </SheetHeader>
-        <div className="flex-grow overflow-y-auto my-4 pr-4 space-y-2">
-          {selectedIconsDetails.map(icon => (
-            <div key={icon.slug} className="text-sm text-muted-foreground truncate p-2 rounded-md bg-muted/50">
-              {icon.title}
-            </div>
-          ))}
-        </div>
+        <ScrollArea className="flex-grow my-4 pr-4">
+          <div className="space-y-2">
+            {selectedIconsDetails.map(icon => (
+              <SelectedIconItem key={icon.slug} icon={icon} />
+            ))}
+          </div>
+        </ScrollArea>
         <div className="flex gap-2 mt-auto border-t pt-4">
           <Button onClick={handleDownloadZip} disabled={isDownloading} className="flex-grow">
             <Download className="h-4 w-4 mr-2" />
