@@ -116,7 +116,7 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
             Visualizar Código SVG: {icon.title}
             
             {/* Color Picker Integrado com Tooltip */}
-            <TooltipProvider>
+            <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="h-6 w-6">
