@@ -2,12 +2,13 @@ import ICO from 'icojs';
 
 const svgTextToDataUrl = (svgText: string, size: number): string => {
   // Adiciona largura e altura ao SVG para renderização correta no canvas.
-  // Os SVGs do simple-icons têm viewBox, mas não width/height.
   const svgWithSize = svgText.replace(
     '<svg',
     `<svg width="${size}" height="${size}"`
   );
-  const encodedSvg = btoa(svgWithSize);
+  // A codificação btoa pode falhar com caracteres UTF-8.
+  // Usamos este truque com encodeURIComponent para garantir que a string seja codificada corretamente.
+  const encodedSvg = btoa(unescape(encodeURIComponent(svgWithSize)));
   return `data:image/svg+xml;base64,${encodedSvg}`;
 };
 
