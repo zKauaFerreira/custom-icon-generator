@@ -2,7 +2,8 @@ import { useEffect, useMemo } from 'react';
 import { Canvg } from 'canvg';
 import { CUSTOM_FAVICON_SVG } from '@/lib/favicon-icon';
 
-const FAVICON_SIZE = 64; // Standard size for modern favicons
+// Aumentando o tamanho para 256x256 para garantir alta resolução em telas HiDPI
+const FAVICON_SIZE = 256; 
 
 /**
  * Hook to dynamically update the document favicon based on a color.
