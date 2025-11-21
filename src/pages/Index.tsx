@@ -38,7 +38,7 @@ const Index = () => {
     const fetchIcons = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://raw.githubusercontent.com/simple-icons/simple-icons/develop/data/simple-icons.json');
+        const response = await fetch('https://unpkg.com/simple-icons/icons.json');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
