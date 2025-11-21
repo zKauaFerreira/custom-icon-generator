@@ -26,12 +26,6 @@ interface BatchDownloaderSheetProps {
   onRemoveIcon: (slug: string) => void;
 }
 
-const getColoredSvg = (baseSvg: string, fillColor: string) => {
-  if (!baseSvg) return '';
-  // Usa regex para adicionar o atributo fill sem remover os existentes (como viewBox).
-  return baseSvg.replace(/<svg(.*?)>/, `<svg fill="${fillColor}"$1>`);
-};
-
 export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ selectedIcons, allIcons, color, onClear, onRemoveIcon }) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -50,18 +44,20 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
           const response = await fetch(`https://cdn.simpleicons.org/${icon.slug}`);
           if (!response.ok) return;
           const svgText = await response.text();
-          const coloredSvg = getColoredSvg(svgText, color);
           const cleanColor = color.substring(1);
           const fileName = `${icon.slug}-${cleanColor}.${format}`;
 
           let fileContent: Blob | string;
 
           if (format === 'svg') {
-            fileContent = coloredSvg;
+            // Colore o SVG aqui para o download direto.
+            fileContent = svgText.replace(/<svg(.*?)>/, `<svg fill="${color}"$1>`);
           } else if (format === 'png') {
-            fileContent = await svgToPng(coloredSvg, 256);
+            // Passa o SVG original e a cor para o conversor.
+            fileContent = await svgToPng(svgText, 256, color);
           } else { // ico
-            fileContent = await svgToIco(coloredSvg);
+            // Passa o SVG original e a cor para o conversor.
+            fileContent = await svgToIco(svgText, color);
           }
           
           zip.file(fileName, fileContent);

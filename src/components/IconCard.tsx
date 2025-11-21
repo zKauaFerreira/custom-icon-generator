@@ -50,9 +50,9 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
     fetchSvg();
   }, [icon.slug]);
 
-  const getColoredSvg = (baseSvg: string | null, fillColor: string) => {
+  const getColoredSvgForPreview = (baseSvg: string | null, fillColor: string) => {
     if (!baseSvg) return '';
-    // Usa regex para adicionar o atributo fill sem remover os existentes (como viewBox).
+    // Adiciona o atributo fill apenas para a visualização no card.
     return baseSvg.replace(/<svg(.*?)>/, `<svg fill="${fillColor}"$1>`);
   };
 
@@ -67,8 +67,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
   };
 
   const handleDownload = async (format: 'svg' | 'png' | 'ico') => {
-    const coloredSvg = getColoredSvg(svgContent, color);
-    if (!coloredSvg) return;
+    if (!svgContent) return;
 
     const cleanColor = color.substring(1);
     const fileName = `${icon.slug}-${cleanColor}.${format}`;
@@ -76,11 +75,15 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
     try {
       let blob: Blob;
       if (format === 'svg') {
+        // Para download de SVG, a coloração é feita aqui, pois não usa o canvg.
+        const coloredSvg = getColoredSvgForPreview(svgContent, color);
         blob = new Blob([coloredSvg], { type: 'image/svg+xml;charset=utf-8' });
       } else if (format === 'png') {
-        blob = await svgToPng(coloredSvg, 256);
+        // Passa o SVG original e a cor para o conversor.
+        blob = await svgToPng(svgContent, 256, color);
       } else { // ico
-        blob = await svgToIco(coloredSvg);
+        // Passa o SVG original e a cor para o conversor.
+        blob = await svgToIco(svgContent, color);
       }
       
       const url = URL.createObjectURL(blob);
@@ -109,7 +112,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
         ) : svgContent ? (
           <div
             className="w-16 h-16"
-            dangerouslySetInnerHTML={{ __html: getColoredSvg(svgContent, color) }}
+            dangerouslySetInnerHTML={{ __html: getColoredSvgForPreview(svgContent, color) }}
           />
         ) : (
           <div className="w-16 h-16 bg-destructive/20 rounded-md" />
