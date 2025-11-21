@@ -120,42 +120,43 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
   };
 
   const TitleComponent = (
-    <CardTitle ref={titleRef} className="truncate pr-8 leading-normal">
+    <CardTitle ref={titleRef} className="truncate leading-normal">
       {icon.title}
     </CardTitle>
   );
 
   return (
     <>
-      {/* Removing the main Card onClick */}
       <Card className="flex flex-col relative bg-card transition-shadow hover:shadow-lg">
-        <div className="absolute top-3 right-3 z-10">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Checkbox
-                checked={isSelected}
-                onCheckedChange={() => onSelect(icon.slug)}
-                aria-label={`Select ${icon.title}`}
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Select</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-        <CardHeader>
-          {isTruncated ? (
+        <CardHeader className="flex flex-row items-start justify-between space-y-0 p-4 pb-2">
+          <div className="flex-grow min-w-0">
+            {isTruncated ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {TitleComponent}
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{icon.title}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              TitleComponent
+            )}
+          </div>
+          <div className="flex-shrink-0 ml-2 pt-1">
             <Tooltip>
               <TooltipTrigger asChild>
-                {TitleComponent}
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={() => onSelect(icon.slug)}
+                  aria-label={`Select ${icon.title}`}
+                />
               </TooltipTrigger>
               <TooltipContent>
-                <p>{icon.title}</p>
+                <p>Select</p>
               </TooltipContent>
             </Tooltip>
-          ) : (
-            TitleComponent
-          )}
+          </div>
         </CardHeader>
         <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md">
           {loading ? (
