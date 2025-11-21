@@ -12,7 +12,7 @@ const NotFound = () => {
       location.pathname,
     );
     
-    // Rola para o topo ao carregar a página
+    // Rola para o topo ao carregar a página (imediato para mudanças de rota)
     if (lenis) {
       lenis.scrollTo(0, { immediate: true });
     }

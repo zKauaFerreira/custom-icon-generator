@@ -82,13 +82,15 @@ const Index = () => {
     setShuffledIcons(shuffleArray(iconList));
   }, []);
   
-  // Efeito para rolar para o topo em mudanças de rota
+  // Efeito para garantir que a página comece no topo ao carregar (sem animação)
+  // Isso é importante para o Lenis, que pode manter a posição de rolagem entre montagens.
   useEffect(() => {
     if (lenis) {
-      // Rola para o topo instantaneamente em mudanças de rota
       lenis.scrollTo(0, { immediate: true });
     }
-  }, [location.pathname, lenis]);
+  }, [lenis]);
+  
+  // Removido o useEffect que monitorava location.pathname
 
   const updateRecentColors = (newColor: string) => {
     const updatedColors = [newColor, ...recentColors.filter((c) => c !== newColor)].slice(0, 10);
@@ -120,6 +122,14 @@ const Index = () => {
     localStorage.setItem(RESOLUTION_STORAGE_KEY, newResolution.toString());
   };
 
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    if (lenis) {
+      // Rola suavemente para o topo
+      lenis.scrollTo(0, { duration: 0.5 });
+    }
+  };
+
   const sortedIcons = useMemo(() => {
     const icons = [...shuffledIcons];
     if (sortBy === 'az') {
@@ -132,6 +142,7 @@ const Index = () => {
   }, [sortBy, shuffledIcons]);
 
   const filteredIcons = useMemo(() => {
+    // Ao filtrar, voltamos para a página 1, mas sem rolagem suave aqui
     setCurrentPage(1);
     if (!searchQuery) return sortedIcons;
     return sortedIcons.filter((icon) =>
@@ -287,7 +298,14 @@ const Index = () => {
                 <PaginationItem>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); setCurrentPage((p) => Math.max(p - 1, 1)); }} className={currentPage === 1 ? "pointer-events-none opacity-50" : ""} />
+                      <PaginationPrevious 
+                        href="#" 
+                        onClick={(e) => { 
+                          e.preventDefault(); 
+                          handlePageChange(Math.max(currentPage - 1, 1)); 
+                        }} 
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : ""} 
+                      />
                     </TooltipTrigger>
                     <TooltipContent><p>Página Anterior</p></TooltipContent>
                   </Tooltip>
@@ -298,7 +316,14 @@ const Index = () => {
                 <PaginationItem>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <PaginationNext href="#" onClick={(e) => { e.preventDefault(); setCurrentPage((p) => Math.min(p + 1, pageCount)); }} className={currentPage === pageCount ? "pointer-events-none opacity-50" : ""} />
+                      <PaginationNext 
+                        href="#" 
+                        onClick={(e) => { 
+                          e.preventDefault(); 
+                          handlePageChange(Math.min(currentPage + 1, pageCount)); 
+                        }} 
+                        className={currentPage === pageCount ? "pointer-events-none opacity-50" : ""} 
+                      />
                     </TooltipTrigger>
                     <TooltipContent><p>Próxima Página</p></TooltipContent>
                   </Tooltip>
