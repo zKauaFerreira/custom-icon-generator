@@ -34,22 +34,22 @@ The application's interface is designed for maximum efficiency.
 Use the search bar at the top to filter the extensive library.
 
 *   **Search:** Type the brand name (e.g., "GitHub") or slug (e.g., "github").
-*   **Sorting:** Use the toggle group to sort results by **A-Z**, **Z-A**, or **Random** order.
+*   **Sorting:** Use the toggle group to sort results by **A-Z** 🔠, **Z-A** 🔤, or **Random** 🎲 order.
 
 ### 2. Customizing the Color 🌈
 
 The color controls are central to the customization process.
 
-*   **Color Picker:** Click the main color swatch to open the hex color picker and select your desired shade.
-*   **Randomize:** Hit the <kbd>Shuffle</kbd> button to apply a random color instantly.
-*   **Saving Colors:** Click the <kbd>Bookmark</kbd> button to save the current color to your recent list.
-*   **Recent Colors:** Click on any saved color swatch to reuse it, or click the small <kbd>X</kbd> to remove it from the list.
+*   **Color Picker:** Click the main color swatch 🎨 to open the hex color picker and select your desired shade.
+*   **Randomize:** Hit the **Shuffle** button 🔀 to apply a random color instantly.
+*   **Saving Colors:** Click the **Bookmark** button 🔖 to save the current color to your recent list.
+*   **Recent Colors:** Click on any saved color swatch to reuse it, or click the small **X** ❌ to remove it from the list.
 
 ### 3. Setting Resolution 📐
 
 For raster formats (PNG and ICO), you can define the output size.
 
-*   Click the resolution button (e.g., <kbd>256x256</kbd>) to open the configuration dialog.
+*   Click the resolution button (e.g., **256x256** 🖼️) to open the configuration dialog.
 *   Choose a predefined size or enter a custom value up to 4096px.
 
 ### 4. Downloading Icons ⬇️
@@ -61,9 +61,9 @@ Each icon card provides quick download buttons:
 *   **ICO:** Downloads a Windows icon file containing multiple standard resolutions (16, 32, 48, 64px), generated at the configured color.
 
 #### B. Batch Download (ZIP Archive)
-1.  **Selection:** Use the checkbox on the top right of each icon card to select it.
-2.  **Batch Sheet:** A floating button appears when 2+ icons are selected. Click it to open the batch panel.
-3.  **Download:** Choose your desired format (SVG, PNG, or ICO) and download all selected icons in a single compressed `.zip` file.
+1.  **Selection:** Use the checkbox ✅ on the top right of each icon card to select it.
+2.  **Batch Sheet:** A floating button appears when 2+ icons are selected. Click it to open the batch panel 📦.
+3.  **Download:** Choose your desired format (SVG, PNG, or ICO) and download all selected icons in a single compressed `.zip` file 💾.
 
 ---
 
@@ -89,9 +89,9 @@ We use the official Simple Icons library.
 
 | Technology | Purpose | Badge |
 |---|---|---|
-| **React** | Frontend Library & Component Structure | ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black&style=flat-square) |
-| **TypeScript** | Enhanced Type Safety & Maintainability | ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white&style=flat-square) |
-| **Tailwind CSS** | Utility-First Styling for Rapid UI Development | ![Tailwind CSS](https://img.shields.io/badge/-Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white&style=flat-square) |
+| **React** | Frontend Library & Component Structure | ![React](https://skillicons.dev/icons?i=react) |
+| **TypeScript** | Enhanced Type Safety & Maintainability | ![TypeScript](https://skillicons.dev/icons?i=ts) |
+| **Tailwind CSS** | Utility-First Styling for Rapid UI Development | ![Tailwind CSS](https://skillicons.dev/icons?i=tailwind) |
 | **Simple Icons** | Comprehensive Icon Data Source | ![Simple Icons](https://img.shields.io/badge/-Simple_Icons-111111?logo=simple-icons&logoColor=white&style=flat-square) |
 | **Canvg** | Client-side SVG to Raster Conversion | ![Canvg](https://img.shields.io/badge/-Canvg-FF69B4?logo=javascript&logoColor=white&style=flat-square) |
 | **Lenis** | Smooth Scrolling Experience | ![Lenis](https://img.shields.io/badge/-Lenis-000000?logo=javascript&logoColor=white&style=flat-square) |
@@ -132,8 +132,8 @@ The application will be available at `http://localhost:8080`. Happy coding! 🚀
 
 We welcome contributions! If you find a bug or have a suggestion for a new feature, please feel free to:
 
-1.  Open an **Issue** to report bugs or propose enhancements.
-2.  Submit a **Pull Request** with your code changes.
+1.  Open an **Issue** 🐛 to report bugs or propose enhancements.
+2.  Submit a **Pull Request** ⬆️ with your code changes.
 
 ---
 
