@@ -45,17 +45,29 @@ export const ResolutionDialog: React.FC<ResolutionDialogProps> = ({ open, onOpen
 
   const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
+    
+    // Atualiza o valor personalizado, mesmo que seja inválido temporariamente
+    setCustomValue(value);
+    setSelectedOption('custom');
+
     if (isNaN(value) || value <= 0) {
-      setCustomValue(0);
       setError("A resolução deve ser um número positivo.");
     } else if (value > MAX_CUSTOM_RESOLUTION) {
-      setCustomValue(value);
       setError(`Resolução máxima permitida é ${MAX_CUSTOM_RESOLUTION}px.`);
     } else {
-      setCustomValue(value);
       setError(null);
     }
-    setSelectedOption('custom');
+  };
+
+  const handleOptionChange = (value: string) => {
+    const newOption = value === 'custom' ? 'custom' : parseInt(value, 10);
+    setSelectedOption(newOption);
+
+    if (typeof newOption === 'number') {
+      // Se selecionar uma opção predefinida, atualiza o campo customValue para refletir essa escolha
+      setCustomValue(newOption);
+      setError(null);
+    }
   };
 
   const handleSave = () => {
@@ -75,7 +87,8 @@ export const ResolutionDialog: React.FC<ResolutionDialogProps> = ({ open, onOpen
     onOpenChange(false);
   };
 
-  const displayCustomValue = selectedOption === 'custom' ? customValue : currentResolution;
+  const currentDisplayValue = selectedOption === 'custom' ? customValue : (typeof selectedOption === 'number' ? selectedOption : currentResolution);
+  const isCustomSelected = selectedOption === 'custom';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -83,52 +96,58 @@ export const ResolutionDialog: React.FC<ResolutionDialogProps> = ({ open, onOpen
         <DialogHeader>
           <DialogTitle>Configurar Resolução de Download</DialogTitle>
           <DialogDescription>
-            Selecione o tamanho (largura e altura em pixels) para os downloads em PNG.
+            Selecione o tamanho (largura e altura em pixels) para os downloads em PNG e ICO.
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4 space-y-4">
+        <div className="py-4 space-y-6">
+          
+          {/* Opções Predefinidas */}
           <RadioGroup 
             value={selectedOption.toString()} 
-            onValueChange={(value) => setSelectedOption(value === 'custom' ? 'custom' : parseInt(value, 10))}
-            className="grid grid-cols-3 gap-2"
+            onValueChange={handleOptionChange}
+            className="space-y-2"
           >
+            <Label className="text-sm font-medium">Resoluções Padrão:</Label>
             {PREDEFINED_RESOLUTIONS.map((res) => (
-              <div key={res} className="flex items-center space-x-2">
-                <RadioGroupItem value={res.toString()} id={`res-${res}`} className="sr-only" />
-                <Label 
-                  htmlFor={`res-${res}`} 
-                  className={cn(
-                    "flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer",
-                    selectedOption === res && "border-primary"
-                  )}
-                >
-                  <Check className={cn("mb-1 h-4 w-4", selectedOption === res ? "opacity-100" : "opacity-0")} />
+              <div key={res} className="flex items-center space-x-3 p-2 rounded-md hover:bg-accent cursor-pointer">
+                <RadioGroupItem value={res.toString()} id={`res-${res}`} />
+                <Label htmlFor={`res-${res}`} className="flex-grow cursor-pointer">
                   {res}x{res}
                 </Label>
               </div>
             ))}
           </RadioGroup>
 
-          <div className="space-y-2 pt-4">
-            <Label htmlFor="custom-res">Resolução Personalizada (Máx: {MAX_CUSTOM_RESOLUTION}px)</Label>
-            <div className="flex gap-2">
+          {/* Resolução Personalizada */}
+          <div className="space-y-2 pt-4 border-t">
+            <div className="flex items-center space-x-3 p-2 rounded-md hover:bg-accent cursor-pointer" onClick={() => setSelectedOption('custom')}>
+                <RadioGroupItem value="custom" id="res-custom" />
+                <Label htmlFor="res-custom" className="flex-grow cursor-pointer">
+                    Resolução Personalizada (Máx: {MAX_CUSTOM_RESOLUTION}px)
+                </Label>
+            </div>
+            
+            <div className="flex gap-2 pl-8">
               <Input
                 id="custom-res"
                 type="number"
-                value={customValue}
+                value={isCustomSelected ? (customValue === 0 ? '' : customValue) : currentDisplayValue}
                 onChange={handleCustomChange}
+                onFocus={() => setSelectedOption('custom')}
                 min={1}
                 max={MAX_CUSTOM_RESOLUTION}
-                className={cn(selectedOption === 'custom' && error && "border-destructive")}
+                placeholder="Ex: 2048"
+                className={cn("w-1/2", isCustomSelected && error && "border-destructive")}
               />
               <Input
-                value={`${displayCustomValue}x${displayCustomValue}`}
+                value={`x ${currentDisplayValue}`}
                 disabled
-                className="w-32 text-center bg-muted/50"
+                className="w-1/2 text-center bg-muted/50"
               />
             </div>
-            {error && (
-              <p className="text-sm text-destructive flex items-center gap-1">
+            
+            {error && isCustomSelected && (
+              <p className="text-sm text-destructive flex items-center gap-1 pl-8">
                 <X className="h-4 w-4" /> {error}
               </p>
             )}
@@ -136,7 +155,7 @@ export const ResolutionDialog: React.FC<ResolutionDialogProps> = ({ open, onOpen
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={handleSave} disabled={!!error || customValue <= 0}>
+          <Button onClick={handleSave} disabled={!!error || currentDisplayValue <= 0}>
             Salvar
           </Button>
         </DialogFooter>
