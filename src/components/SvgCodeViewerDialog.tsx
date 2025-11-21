@@ -6,14 +6,14 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, Download, Palette } from "lucide-react";
+import { Copy, Download } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
 import { showSuccess, showError } from "@/utils/toast";
 import { IconData } from "@/pages/Index";
 import { saveAs } from "file-saver";
 import React, { useState, useMemo, useEffect } from "react";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+// Removendo Label, Palette, pois o painel lateral foi removido
 
 interface SvgCodeViewerDialogProps {
   open: boolean;
@@ -108,11 +108,20 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             Visualizar Código SVG: {icon.title}
+            
+            {/* Seletor de Cor Integrado */}
             <div 
-              className="w-6 h-6 rounded-full border border-border" 
+              className="relative w-6 h-6 rounded-full border border-border cursor-pointer group" 
               style={{ backgroundColor: localColor }} 
-              title={`Cor: ${localColor}`}
-            />
+              title={`Cor: ${localColor} (Clique para alterar)`}
+            >
+                <Input 
+                    type="color" 
+                    value={localColor} 
+                    onChange={(e) => setLocalColor(e.target.value)}
+                    className="absolute inset-0 opacity-0 cursor-pointer p-0 h-full w-full"
+                />
+            </div>
           </DialogTitle>
           <DialogDescription>
             Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold">{localColor}</span>).
@@ -120,34 +129,22 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         </DialogHeader>
         
         <div className="flex gap-4 flex-grow min-h-0">
-          {/* Painel de Controle de Cor */}
+          {/* Pré-visualização e Código */}
+          
+          {/* Painel de Pré-visualização */}
           <div className="w-1/4 flex flex-col items-center p-4 border rounded-md bg-muted/50">
             <div
               className="w-24 h-24 mb-4"
               dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, localColor) }}
             />
             <p className="mb-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
-
             <div className="w-full space-y-2">
-                <Label htmlFor="color-picker" className="flex items-center gap-2 text-sm font-medium">
-                    <Palette className="h-4 w-4" /> Alterar Cor
-                </Label>
-                <div className="flex gap-2">
-                    <Input 
-                        id="color-picker"
-                        type="color" 
-                        value={localColor} 
-                        onChange={(e) => setLocalColor(e.target.value)}
-                        className="h-10 w-10 p-0 cursor-pointer"
-                        style={{ backgroundColor: localColor }}
-                    />
-                    <Input 
-                        type="text" 
-                        value={localColor} 
-                        onChange={(e) => setLocalColor(e.target.value)}
-                        className="flex-grow font-mono text-center"
-                    />
-                </div>
+                <Input 
+                    type="text" 
+                    value={localColor} 
+                    onChange={(e) => setLocalColor(e.target.value)}
+                    className="flex-grow font-mono text-center"
+                />
             </div>
           </div>
 
