@@ -82,15 +82,12 @@ const Index = () => {
     setShuffledIcons(shuffleArray(iconList));
   }, []);
   
-  // Efeito para garantir que a página comece no topo ao carregar (sem animação)
-  // Isso é importante para o Lenis, que pode manter a posição de rolagem entre montagens.
+  // Garante que a página comece no topo imediatamente na montagem (após F5)
   useEffect(() => {
     if (lenis) {
       lenis.scrollTo(0, { immediate: true });
     }
   }, [lenis]);
-  
-  // Removido o useEffect que monitorava location.pathname
 
   const updateRecentColors = (newColor: string) => {
     const updatedColors = [newColor, ...recentColors.filter((c) => c !== newColor)].slice(0, 10);
