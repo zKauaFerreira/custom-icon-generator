@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { IconCard } from "@/components/IconCard";
 import { ColorSelector } from "@/components/ColorSelector";
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { icons as allSimpleIcons } from 'simple-icons';
+import * as allSimpleIcons from 'simple-icons';
 
 // Definindo a estrutura de dados para um ícone
 export interface IconData {
