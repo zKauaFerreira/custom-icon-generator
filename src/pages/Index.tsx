@@ -15,7 +15,7 @@ import { BackToTopButton } from "@/components/BackToTopButton";
 import { ResolutionDialog } from "@/components/ResolutionDialog";
 import { useLocation } from "react-router-dom";
 import { useLenis } from "@/components/LenisProvider";
-import { useDynamicPlaceholder } from "@/hooks/use-dynamic-placeholder"; // Importando o novo hook
+import { useDynamicPlaceholder } from "@/hooks/use-dynamic-placeholder";
 
 export interface IconData {
   title: string;
@@ -71,7 +71,7 @@ const Index = () => {
   
   const lenis = useLenis();
   
-  // --- Novo Hook para Placeholder Dinâmico ---
+  // Hook para Placeholder Dinâmico
   const dynamicPlaceholder = useDynamicPlaceholder(iconList);
 
   useEffect(() => {
@@ -142,12 +142,35 @@ const Index = () => {
   }, [sortBy, shuffledIcons]);
 
   const filteredIcons = useMemo(() => {
-    // Ao filtrar, voltamos para a página 1, mas sem rolagem suave aqui
     setCurrentPage(1);
     if (!searchQuery) return sortedIcons;
-    return sortedIcons.filter((icon) =>
-      icon.title.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const query = searchQuery.toLowerCase();
+
+    // 1. Filtra todos os ícones que contêm a query
+    const matches = sortedIcons.filter((icon) =>
+      icon.title.toLowerCase().includes(query) || icon.slug.toLowerCase().includes(query)
     );
+
+    // 2. Classifica os resultados
+    matches.sort((a, b) => {
+      const aTitle = a.title.toLowerCase();
+      const bTitle = b.title.toLowerCase();
+      const aSlug = a.slug.toLowerCase();
+      const bSlug = b.slug.toLowerCase();
+
+      const aStarts = aTitle.startsWith(query) || aSlug.startsWith(query);
+      const bStarts = bTitle.startsWith(query) || bSlug.startsWith(query);
+
+      // Prioriza quem começa com a query
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+
+      // Se ambos começam ou nenhum começa, ordena alfabeticamente pelo título
+      return aTitle.localeCompare(bTitle);
+    });
+
+    return matches;
   }, [searchQuery, sortedIcons]);
 
   const pageCount = Math.ceil(filteredIcons.length / ITEMS_PER_PAGE);
@@ -348,8 +371,6 @@ const Index = () => {
       />
       
       <BackToTopButton />
-
-      <MadeWithDyad />
 
       <ResolutionDialog
         open={isResolutionDialogOpen}
