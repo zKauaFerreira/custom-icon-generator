@@ -197,6 +197,7 @@ const Index = () => {
         allIcons={iconList}
         color={color}
         onClear={() => setSelectedIcons(new Set())}
+        onRemoveIcon={handleSelectIcon}
       />
 
       <MadeWithDyad />

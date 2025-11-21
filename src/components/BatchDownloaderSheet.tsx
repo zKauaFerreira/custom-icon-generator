@@ -21,6 +21,7 @@ interface BatchDownloaderSheetProps {
   allIcons: IconData[];
   color: string;
   onClear: () => void;
+  onRemoveIcon: (slug: string) => void;
 }
 
 const getColoredSvg = (baseSvg: string, fillColor: string) => {
@@ -28,7 +29,7 @@ const getColoredSvg = (baseSvg: string, fillColor: string) => {
   return baseSvg.replace('<svg', `<svg fill="${fillColor}"`);
 };
 
-export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ selectedIcons, allIcons, color, onClear }) => {
+export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ selectedIcons, allIcons, color, onClear, onRemoveIcon }) => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const selectedIconsDetails = allIcons.filter(icon => selectedIcons.has(icon.slug));
@@ -84,7 +85,7 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
         <ScrollArea className="flex-grow my-4 pr-4">
           <div className="space-y-2">
             {selectedIconsDetails.map(icon => (
-              <SelectedIconItem key={icon.slug} icon={icon} />
+              <SelectedIconItem key={icon.slug} icon={icon} onRemove={onRemoveIcon} />
             ))}
           </div>
         </ScrollArea>
