@@ -11,7 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { Check, X } from "lucide-react";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type Resolution = number | 'custom';
@@ -101,57 +101,57 @@ export const ResolutionDialog: React.FC<ResolutionDialogProps> = ({ open, onOpen
         </DialogHeader>
         <div className="py-4 space-y-6">
           
-          {/* Opções Predefinidas */}
           <RadioGroup 
             value={selectedOption.toString()} 
             onValueChange={handleOptionChange}
             className="space-y-2"
           >
-            <Label className="text-sm font-medium">Resoluções Padrão:</Label>
+            <Label className="text-sm font-medium mb-2 block">Resoluções Padrão:</Label>
             {PREDEFINED_RESOLUTIONS.map((res) => (
-              <div key={res} className="flex items-center space-x-3 p-2 rounded-md hover:bg-accent cursor-pointer">
+              <div key={res} className="flex items-center space-x-3 p-2 rounded-md hover:bg-accent cursor-pointer" onClick={() => handleOptionChange(res.toString())}>
                 <RadioGroupItem value={res.toString()} id={`res-${res}`} />
                 <Label htmlFor={`res-${res}`} className="flex-grow cursor-pointer">
                   {res}x{res}
                 </Label>
               </div>
             ))}
-          </RadioGroup>
 
-          {/* Resolução Personalizada */}
-          <div className="space-y-2 pt-4 border-t">
-            <div className="flex items-center space-x-3 p-2 rounded-md hover:bg-accent cursor-pointer" onClick={() => setSelectedOption('custom')}>
-                <RadioGroupItem value="custom" id="res-custom" />
-                <Label htmlFor="res-custom" className="flex-grow cursor-pointer">
-                    Resolução Personalizada (Máx: {MAX_CUSTOM_RESOLUTION}px)
-                </Label>
+            {/* Resolução Personalizada - Agora dentro do RadioGroup */}
+            <div className="space-y-2 pt-4 border-t mt-4">
+                <div className="flex items-center space-x-3 p-2 rounded-md hover:bg-accent cursor-pointer" onClick={() => handleOptionChange('custom')}>
+                    <RadioGroupItem value="custom" id="res-custom" />
+                    <Label htmlFor="res-custom" className="flex-grow cursor-pointer">
+                        Resolução Personalizada (Máx: {MAX_CUSTOM_RESOLUTION}px)
+                    </Label>
+                </div>
+                
+                <div className="flex gap-2 pl-8">
+                  <Input
+                    id="custom-res"
+                    type="number"
+                    value={isCustomSelected ? (customValue === 0 ? '' : customValue) : currentDisplayValue}
+                    onChange={handleCustomChange}
+                    onFocus={() => setSelectedOption('custom')}
+                    min={1}
+                    max={MAX_CUSTOM_RESOLUTION}
+                    placeholder="Ex: 2048"
+                    className={cn("w-1/2", isCustomSelected && error && "border-destructive")}
+                    disabled={!isCustomSelected}
+                  />
+                  <Input
+                    value={`x ${currentDisplayValue}`}
+                    disabled
+                    className="w-1/2 text-center bg-muted/50"
+                  />
+                </div>
+                
+                {error && isCustomSelected && (
+                  <p className="text-sm text-destructive flex items-center gap-1 pl-8">
+                    <X className="h-4 w-4" /> {error}
+                  </p>
+                )}
             </div>
-            
-            <div className="flex gap-2 pl-8">
-              <Input
-                id="custom-res"
-                type="number"
-                value={isCustomSelected ? (customValue === 0 ? '' : customValue) : currentDisplayValue}
-                onChange={handleCustomChange}
-                onFocus={() => setSelectedOption('custom')}
-                min={1}
-                max={MAX_CUSTOM_RESOLUTION}
-                placeholder="Ex: 2048"
-                className={cn("w-1/2", isCustomSelected && error && "border-destructive")}
-              />
-              <Input
-                value={`x ${currentDisplayValue}`}
-                disabled
-                className="w-1/2 text-center bg-muted/50"
-              />
-            </div>
-            
-            {error && isCustomSelected && (
-              <p className="text-sm text-destructive flex items-center gap-1 pl-8">
-                <X className="h-4 w-4" /> {error}
-              </p>
-            )}
-          </div>
+          </RadioGroup>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
