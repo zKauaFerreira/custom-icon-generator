@@ -74,17 +74,6 @@ This application is a modern, client-side React application focused on performan
 ### Icon Source Information
 We use the official Simple Icons library.
 
-<details>
-<summary>ℹ️ Click to view current Simple Icons version</summary>
-
-| Property | Value |
-|---|---|
-| **Library** | `simple-icons` |
-| **Version** | `v15.21.0` |
-| **Total Icons** | `> 3000` |
-
-</details>
-
 ### Core Technologies
 
 <table align="center">
