@@ -182,5 +182,5 @@ This project is licensed under the MIT License.
 ---
 
 <p align="center">
-  Made with 💙 by Kaua~ Ferreira.
+  Made with 💙 by Kauã Ferreira.
 </p>
