@@ -52,7 +52,7 @@ const Index = () => {
   const [shuffledIcons, setShuffledIcons] = useState<IconData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<'random' | 'az' | 'za'>('random');
-  const [selectedIcons, setSelectedIcons] = useState(new Set<string>());
+  const [selectedIcons, setSelectedIcons] = new Set<string>());
   const [resolution, setResolution] = useState(() => {
     // Inicializa a resolução a partir do localStorage
     if (typeof window !== 'undefined') {
@@ -192,14 +192,25 @@ const Index = () => {
       <main>
         <div className="bg-background/80 backdrop-blur-sm p-4 rounded-lg border mb-8 flex flex-col gap-4">
           <div className="relative flex-grow w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
               type="text"
               placeholder={dynamicPlaceholder} // Usando o placeholder dinâmico
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className={searchQuery ? "pl-10 pr-10" : "pl-10"} // Ajusta o padding direito se houver texto
             />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground hover:bg-transparent p-0"
+                aria-label="Limpar pesquisa"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
           
           {/* Controles: Esquerda (Cores), Centro (Resolução), Direita (Filtros) */}
