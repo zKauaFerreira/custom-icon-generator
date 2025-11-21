@@ -109,7 +109,7 @@ We use the official Simple Icons library.
     </td>
     <td align="center" width="180">
       <a href="https://simpleicons.org/">
-        <img src="https://skillicons.dev/icons?i=simpleicons" alt="Simple Icons" width="60" height="60">
+        <img src="./public/tech-icons/simpleicons.svg" alt="Simple Icons" width="60" height="60">
         <br>Simple Icons
       </a>
     </td>
@@ -117,25 +117,25 @@ We use the official Simple Icons library.
   <tr>
     <td align="center" width="180">
       <a href="https://canvg.github.io/">
-        <img src="https://skillicons.dev/icons?i=js" alt="Canvg" width="60" height="60">
+        <img src="./public/tech-icons/canvag.svg" alt="Canvg" width="60" height="60">
         <br>Canvg (JS)
       </a>
     </td>
     <td align="center" width="180">
       <a href="https://lenis.studiofreight.com/">
-        <img src="https://skillicons.dev/icons?i=js" alt="Lenis" width="60" height="60">
+        <img src="./public/tech-icons/lenis.svg" alt="Lenis" width="60" height="60">
         <br>Lenis (JS)
       </a>
     </td>
     <td align="center" width="180">
       <a href="https://ui.shadcn.com/">
-        <img src="https://skillicons.dev/icons?i=vercel" alt="Shadcn/ui" width="60" height="60">
+        <img src="./public/tech-icons/shadcnuisvg.svg" alt="Shadcn/ui" width="60" height="60">
         <br>Shadcn/ui
       </a>
     </td>
     <td align="center" width="180">
       <a href="https://vitejs.dev/">
-        <img src="https://skillicons.dev/icons?i=vite" alt="Vite" width="60" height="60">
+        <img src="./public/tech-icons/vite.svg" alt="Vite" width="60" height="60">
         <br>Vite
       </a>
     </td>
