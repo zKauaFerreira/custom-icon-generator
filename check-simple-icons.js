@@ -53,7 +53,7 @@ async function commitToGitHub(updatedContentMain) {
     const apiBase = `https://api.github.com/repos/${owner}/${repo}`;
 
     try {
-        // pegar último commit da main
+        // pegar último commit da branch
         console.log("📦 Pegando último commit da branch", branch);
         const refRes = await fetch(`${apiBase}/git/ref/heads/${branch}`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -62,7 +62,7 @@ async function commitToGitHub(updatedContentMain) {
         console.log("📦 Ref data:", refData);
         const latestCommitSha = refData.object.sha;
 
-        // pegar commit para extrair a tree
+        // pegar commit para extrair tree
         console.log("🌲 Pegando commit para extrair tree");
         const commitRes = await fetch(`${apiBase}/git/commits/${latestCommitSha}`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -126,7 +126,7 @@ async function commitToGitHub(updatedContentMain) {
         const newCommitData = await newCommitRes.json();
         console.log("✏️ New commit data:", newCommitData);
 
-        // atualizar ponteiro da branch
+        // atualizar ponteiro da branch main
         console.log("🔗 Atualizando ponteiro da branch", branch);
         const patchRes = await fetch(`${apiBase}/git/refs/heads/${branch}`, {
             method: "PATCH",
@@ -193,10 +193,9 @@ async function main() {
             // commit na main
             await commitToGitHub(updatedMainContent);
 
-            process.exit(1);
+            console.log("✅ Atualização concluída com sucesso!");
         } else {
             console.log("✅ Nenhuma atualização necessária.");
-            process.exit(0);
         }
     } catch (e) {
         console.error("❌ Erro na execução do script:", e);
