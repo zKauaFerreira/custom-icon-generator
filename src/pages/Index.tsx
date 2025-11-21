@@ -40,6 +40,8 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 const getRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
 
 const ITEMS_PER_PAGE = 50;
+const RESOLUTION_STORAGE_KEY = 'iconGeneratorResolution';
+const DEFAULT_RESOLUTION = 256;
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,10 +51,11 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<'random' | 'az' | 'za'>('random');
   const [selectedIcons, setSelectedIcons] = useState(new Set<string>());
-  const [resolution, setResolution] = useState(256); // Novo estado para resolução
-  const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false); // Novo estado para o modal
+  const [resolution, setResolution] = useState(DEFAULT_RESOLUTION); 
+  const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false); 
 
   useEffect(() => {
+    // Carregar cores recentes
     try {
       const storedColors = localStorage.getItem("recentColors");
       if (storedColors) setRecentColors(JSON.parse(storedColors));
@@ -60,6 +63,21 @@ const Index = () => {
       console.error("Failed to parse recent colors from localStorage", error);
       localStorage.removeItem("recentColors");
     }
+    
+    // Carregar resolução salva
+    try {
+      const storedResolution = localStorage.getItem(RESOLUTION_STORAGE_KEY);
+      if (storedResolution) {
+        const parsedResolution = parseInt(storedResolution, 10);
+        if (!isNaN(parsedResolution) && parsedResolution > 0) {
+          setResolution(parsedResolution);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to parse resolution from localStorage", error);
+      localStorage.removeItem(RESOLUTION_STORAGE_KEY);
+    }
+
     setShuffledIcons(shuffleArray(iconList));
   }, []);
 
@@ -189,7 +207,7 @@ const Index = () => {
             <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
               <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem></TooltipTrigger><TooltipContent>Aleatório</TooltipContent></Tooltip>
               <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="az" aria-label="Ordenar de A a Z" className="whitespace-nowrap">A-Z</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética</TooltipContent></Tooltip>
-              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="za" aria-label="Ordenar de Z a A" className="whitespace-nowrap">Z-A</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética Inversa</TooltipContent></Tooltip>
+              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="za" aria-label="Ordenar de Z a A" className="whitespace-nowrap">Z-A</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética Inversa</TooltipContent></ToggleGroupItem>
             </ToggleGroup>
           </div>
         </div>

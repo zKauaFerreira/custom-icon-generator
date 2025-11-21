@@ -25,6 +25,7 @@ interface ResolutionDialogProps {
 
 const PREDEFINED_RESOLUTIONS = [16, 32, 64, 128, 256, 512, 1024];
 const MAX_CUSTOM_RESOLUTION = 4096;
+const RESOLUTION_STORAGE_KEY = 'iconGeneratorResolution';
 
 export const ResolutionDialog: React.FC<ResolutionDialogProps> = ({ open, onOpenChange, currentResolution, onResolutionChange }) => {
   const [selectedOption, setSelectedOption] = useState<Resolution>(currentResolution);
@@ -83,6 +84,9 @@ export const ResolutionDialog: React.FC<ResolutionDialogProps> = ({ open, onOpen
       finalResolution = selectedOption;
     }
 
+    // Salva no localStorage
+    localStorage.setItem(RESOLUTION_STORAGE_KEY, finalResolution.toString());
+    
     onResolutionChange(finalResolution);
     onOpenChange(false);
   };
