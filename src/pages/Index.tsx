@@ -9,6 +9,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationNext, Paginati
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Shuffle } from "lucide-react";
+import { PreviewBackgroundSelector } from "@/components/PreviewBackgroundSelector";
 
 export interface IconData {
   title: string;
@@ -38,6 +39,7 @@ const Index = () => {
   const [shuffledIcons, setShuffledIcons] = useState<IconData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<'random' | 'az' | 'za'>('random');
+  const [previewBg, setPreviewBg] = useState('transparent');
 
   useEffect(() => {
     try {
@@ -95,8 +97,8 @@ const Index = () => {
       </header>
 
       <main>
-        <div className="flex flex-col md:flex-row gap-6 mb-8 sticky top-4 z-10 bg-background/80 backdrop-blur-sm p-4 rounded-lg border items-center">
-          <div className="flex-grow w-full">
+        <div className="flex flex-col md:flex-row gap-6 mb-8 sticky top-4 z-10 bg-background/80 backdrop-blur-sm p-4 rounded-lg border items-center flex-wrap">
+          <div className="flex-grow w-full md:w-auto">
             <Input
               type="text"
               placeholder="Pesquisar ícones (ex: Spotify, Discord...)"
@@ -113,6 +115,7 @@ const Index = () => {
               <ToggleGroupItem value="za" aria-label="Ordenar de Z a A">Z-A</ToggleGroupItem>
             </ToggleGroup>
           </div>
+          <PreviewBackgroundSelector value={previewBg} onChange={setPreviewBg} />
           <ColorSelector color={color} setColor={setColor} recentColors={recentColors} />
         </div>
 
@@ -120,7 +123,7 @@ const Index = () => {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {paginatedIcons.map((icon) => (
-                <IconCard key={icon.slug} icon={icon} color={color} onColorUse={updateRecentColors} />
+                <IconCard key={icon.slug} icon={icon} color={color} onColorUse={updateRecentColors} previewBg={previewBg} />
               ))}
             </div>
             <Pagination className="mt-8">

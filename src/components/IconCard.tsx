@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toIco from 'to-ico';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,12 +13,12 @@ interface IconCardProps {
   icon: IconData;
   color: string;
   onColorUse: (color: string) => void;
+  previewBg: string;
 }
 
-// Cache em memória para os SVGs para evitar buscas repetidas na mesma sessão
 const svgCache = new Map<string, string>();
 
-export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) => {
+export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse, previewBg }) => {
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -48,7 +49,6 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) =
 
   const getColoredSvg = (baseSvg: string | null, fillColor: string) => {
     if (!baseSvg) return '';
-    // Adiciona o atributo fill diretamente na tag <svg>
     return baseSvg.replace('<svg', `<svg fill="${fillColor}"`);
   };
 
@@ -62,6 +62,24 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) =
     URL.revokeObjectURL(url);
   };
 
+  const convertSvgToPng = (svgBlobUrl: string, size: number): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return reject(new Error("Could not get canvas context"));
+
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = size;
+        canvas.height = size;
+        ctx.drawImage(img, 0, 0, size, size);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = () => reject(new Error("Failed to load SVG blob into image."));
+      img.src = svgBlobUrl;
+    });
+  };
+
   const handleDownload = async (format: 'svg' | 'png' | 'ico') => {
     onColorUse(color);
     const coloredSvg = getColoredSvg(svgContent, color);
@@ -72,32 +90,24 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) =
     const svgBlob = new Blob([coloredSvg], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(svgBlob);
 
-    if (format === 'svg') {
-      triggerDownload(url, fileName);
-      return;
-    }
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const img = new Image();
-    img.onload = async () => {
-      canvas.width = 256;
-      canvas.height = 256;
-      ctx.drawImage(img, 0, 0, 256, 256);
-      URL.revokeObjectURL(url); // Limpa o objeto URL do SVG
-
-      if (format === 'png') {
-        const pngUrl = canvas.toDataURL('image/png');
+    try {
+      if (format === 'svg') {
+        triggerDownload(url, fileName);
+      } else if (format === 'png') {
+        const pngUrl = await convertSvgToPng(url, 256);
         triggerDownload(pngUrl, fileName);
+      } else if (format === 'ico') {
+        const sizes = [16, 24, 32, 48, 64];
+        const pngBlobs = await Promise.all(sizes.map(size => convertSvgToPng(url, size)));
+        const icoFile = await toIco(pngBlobs);
+        const icoUrl = URL.createObjectURL(new Blob([icoFile], { type: 'image/x-icon' }));
+        triggerDownload(icoUrl, fileName);
       }
-    };
-    img.onerror = () => {
-      console.error("Failed to load SVG blob into image.");
+    } catch (error) {
+      console.error(`Failed to download as ${format}:`, error);
+    } finally {
       URL.revokeObjectURL(url);
-    };
-    img.src = url;
+    }
   };
 
   return (
@@ -105,7 +115,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) =
       <CardHeader>
         <CardTitle className="truncate">{icon.title}</CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow flex justify-center items-center p-6">
+      <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md" style={{ backgroundColor: previewBg }}>
         {loading ? (
           <Skeleton className="h-16 w-16" />
         ) : svgContent ? (
@@ -120,7 +130,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse }) =
       <CardFooter className="flex flex-wrap justify-center gap-2">
         <Button size="sm" variant="outline" onClick={() => handleDownload('svg')} disabled={loading || !svgContent}>SVG</Button>
         <Button size="sm" variant="outline" onClick={() => handleDownload('png')} disabled={loading || !svgContent}>PNG</Button>
-        <Button size="sm" variant="outline" onClick={() => handleDownload('ico')} disabled>ICO</Button>
+        <Button size="sm" variant="outline" onClick={() => handleDownload('ico')} disabled={loading || !svgContent}>ICO</Button>
       </CardFooter>
     </Card>
   );
