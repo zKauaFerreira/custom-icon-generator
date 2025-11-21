@@ -16,7 +16,6 @@ import { ColorPicker } from "./ColorPicker";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { IconInfoCard } from './IconInfoCard';
@@ -116,23 +115,21 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
             Visualizar Código SVG: {icon.title}
             
             {/* Color Picker Integrado com Tooltip */}
-            <TooltipProvider delayDuration={300}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="h-6 w-6">
-                    <ColorPicker 
-                        value={localColor} 
-                        onChange={setLocalColor}
-                        size="sm"
-                        className="h-6 w-6"
-                    />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Alterar Cor ({localColor})</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="h-6 w-6">
+                  <ColorPicker 
+                      value={localColor} 
+                      onChange={setLocalColor}
+                      size="sm"
+                      className="h-6 w-6"
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Alterar Cor ({localColor})</p>
+              </TooltipContent>
+            </Tooltip>
           </DialogTitle>
           <DialogDescription>
             Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold" style={{ color: localColor }}>{localColor}</span>).
