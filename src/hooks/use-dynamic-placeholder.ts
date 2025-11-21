@@ -1,36 +1,36 @@
 import { useState, useMemo } from 'react';
 import type { IconData } from '@/pages/Index';
 
-// Função utilitária para obter um elemento aleatório de um array
+// Utility function to get a random element from an array
 const getRandomElement = <T,>(array: T[]): T => {
   return array[Math.floor(Math.random() * array.length)];
 };
 
-// Função para gerar o placeholder
+// Function to generate the placeholder
 const generatePlaceholder = (iconList: IconData[]): string => {
-  if (iconList.length < 2) return "Pesquisar ícones...";
+  if (iconList.length < 2) return "Search icons...";
   
   const icon1 = getRandomElement(iconList);
   let icon2 = getRandomElement(iconList);
   
-  // Garante que os dois ícones sejam diferentes
+  // Ensures the two icons are different
   while (icon2.slug === icon1.slug) {
     icon2 = getRandomElement(iconList);
   }
   
-  return `Pesquisar ícones (ex: ${icon1.title}, ${icon2.title}...)`;
+  return `Search icons (ex: ${icon1.title}, ${icon2.title}...)`;
 };
 
 /**
- * Hook que retorna um placeholder dinâmico que é gerado apenas na montagem do componente.
- * @param iconList A lista completa de dados dos ícones.
- * @returns A string do placeholder dinâmico.
+ * Hook that returns a dynamic placeholder generated only on component mount.
+ * @param iconList The complete list of icon data.
+ * @returns The dynamic placeholder string.
  */
 export function useDynamicPlaceholder(iconList: IconData[]): string {
-  // O placeholder é gerado apenas uma vez na inicialização do estado.
+  // The placeholder is generated only once during state initialization.
   const [placeholder] = useState(() => generatePlaceholder(iconList));
   
-  // O hook não precisa mais do Lenis nem do useEffect, pois não atualiza na rolagem.
+  // The hook no longer needs Lenis or useEffect, as it doesn't update on scroll.
   
   return placeholder;
 }
