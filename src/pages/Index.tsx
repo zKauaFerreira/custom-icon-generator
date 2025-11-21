@@ -310,7 +310,7 @@ const Index = () => {
                     Z-A
                   </ToggleGroupItem>
                 </TooltipTrigger>
-                <TooltipContent>Reverse Alphabetical Order</p></TooltipContent>
+                <TooltipContent><p>Reverse Alphabetical Order</p></TooltipContent>
               </Tooltip>
             </ToggleGroup>
           </div>
