@@ -108,7 +108,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onS
       <CardHeader>
         <CardTitle className="truncate pr-8 leading-normal">{icon.title}</CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md bg-black/20">
+      <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md">
         {loading ? (
           <Skeleton className="h-16 w-16" />
         ) : svgContent ? (
