@@ -53,7 +53,8 @@ export function useFavicon(color: string) {
     // Use Canvg to render the colored SVG onto the canvas
     const renderFavicon = async () => {
       try {
-        const v = await Canvg.from(ctx, coloredSvg);
+        // Use Canvg.fromString to explicitly load from a string, avoiding fetch issues.
+        const v = Canvg.fromString(ctx, coloredSvg);
         await v.render();
         
         // Convert canvas to PNG Data URL
