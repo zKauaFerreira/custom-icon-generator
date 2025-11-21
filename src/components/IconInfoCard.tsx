@@ -10,9 +10,9 @@ interface IconInfoCardProps {
   onColorSelect: (color: string) => void;
 }
 
-// Função para buscar os dados originais do Simple Icon usando o slug
+// Function to fetch original Simple Icon data using the slug
 const getOriginalIconData = (slug: string) => {
-  // Simple Icons exporta objetos com a chave sendo o título, mas precisamos encontrar pelo slug
+  // Simple Icons exports objects with the key being the title, but we need to find by slug
   const iconKey = Object.keys(allSimpleIcons).find(key => 
     (allSimpleIcons as any)[key].slug === slug
   );
@@ -34,7 +34,7 @@ export const IconInfoCard: React.FC<IconInfoCardProps> = ({ icon, onColorSelect 
   return (
     <Card className="w-full flex-grow bg-muted/50 border-none shadow-none flex flex-col">
       <CardContent className="p-4 pt-2 text-sm space-y-3 flex flex-col flex-grow">
-        <h3 className="text-lg font-semibold mb-2">Informações</h3>
+        <h3 className="text-lg font-semibold mb-2">Information</h3>
         
         {/* Slug */}
         <div>
@@ -44,16 +44,16 @@ export const IconInfoCard: React.FC<IconInfoCardProps> = ({ icon, onColorSelect 
           <span className="font-mono text-foreground text-base break-all">{icon.slug}</span>
         </div>
         
-        {/* Cor Original */}
+        {/* Original Color */}
         <div>
           <Tooltip>
             <TooltipTrigger asChild>
               <span className="flex items-center gap-1 text-muted-foreground text-xs font-medium uppercase cursor-default">
-                <Palette className="h-3 w-3" /> Cor:
+                <Palette className="h-3 w-3" /> Color:
               </span>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Cor Original do Ícone</p>
+              <p>Original Icon Color</p>
             </TooltipContent>
           </Tooltip>
           
@@ -66,18 +66,18 @@ export const IconInfoCard: React.FC<IconInfoCardProps> = ({ icon, onColorSelect 
                     onClick={handleColorClick}
                     className="w-4 h-4 rounded-sm border cursor-pointer hover:ring-2 ring-primary transition-all flex-shrink-0"
                     style={{ backgroundColor: originalHex }}
-                    aria-label={`Usar cor ${originalHex}`}
+                    aria-label={`Use color ${originalHex}`}
                   />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Usar Cor Original</p>
+                  <p>Use Original Color</p>
                 </TooltipContent>
               </Tooltip>
             )}
           </div>
         </div>
         
-        {/* Fonte Original - Empurrado para baixo */}
+        {/* Original Source - Pushed to the bottom */}
         {sourceUrl && (
           <div className="pt-3 border-t mt-auto">
             <a 
@@ -87,7 +87,7 @@ export const IconInfoCard: React.FC<IconInfoCardProps> = ({ icon, onColorSelect 
               className="text-primary hover:underline flex items-center gap-1 text-xs font-medium"
             >
               <Link className="h-4 w-4" />
-              Fonte Original
+              Original Source
             </a>
           </div>
         )}

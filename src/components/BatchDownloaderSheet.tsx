@@ -36,7 +36,7 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
   const handleDownloadZip = async (format: DownloadFormat) => {
     setIsDownloading(true);
     setIsDialogOpen(false);
-    const loadingToast = showLoading(`Preparando ${selectedIcons.size} ícones como ${format.toUpperCase()}...`);
+    const loadingToast = showLoading(`Preparing ${selectedIcons.size} icons as ${format.toUpperCase()}...`);
     const zip = new JSZip();
 
     try {
@@ -64,7 +64,7 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
           
           zip.file(fileName, fileContent);
         } catch (e) {
-          console.error(`Falha ao processar o ícone ${icon.slug}:`, e);
+          console.error(`Failed to process icon ${icon.slug}:`, e);
         }
       });
 
@@ -73,11 +73,11 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
       const content = await zip.generateAsync({ type: 'blob' });
       saveAs(content, `icons-${color.substring(1)}-${format}.zip`);
       dismissToast(loadingToast);
-      showSuccess('Download iniciado!');
+      showSuccess('Download started!');
     } catch (error) {
-      console.error("Falha ao criar o arquivo ZIP:", error);
+      console.error("Failed to create ZIP file:", error);
       dismissToast(loadingToast);
-      showError('Falha ao gerar o arquivo ZIP.');
+      showError('Failed to generate ZIP file.');
     } finally {
       setIsDownloading(false);
     }
@@ -93,14 +93,14 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
         <SheetTrigger asChild>
           <Button className="fixed bottom-8 right-8 z-50 h-14 rounded-full shadow-lg flex items-center gap-3 px-6 animate-in fade-in-90 slide-in-from-bottom-10 duration-300">
             <FileArchive className="h-6 w-6" />
-            <span className="text-lg font-semibold">{selectedIcons.size} selecionado(s)</span>
+            <span className="text-lg font-semibold">{selectedIcons.size} selected</span>
           </Button>
         </SheetTrigger>
         <SheetContent className="w-[400px] sm:w-[540px] flex flex-col" side="right">
           <SheetHeader>
-            <SheetTitle>Ícones Selecionados ({selectedIcons.size})</SheetTitle>
+            <SheetTitle>Selected Icons ({selectedIcons.size})</SheetTitle>
             <SheetDescription>
-              Revise sua seleção e baixe todos os ícones de uma vez. (PNG/ICO em {resolution}x{resolution})
+              Review your selection and download all icons at once. (PNG/ICO at {resolution}x{resolution})
             </SheetDescription>
           </SheetHeader>
           <ScrollArea className="flex-grow my-4 pr-4">
@@ -113,11 +113,11 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
           <div className="flex gap-2 mt-auto border-t pt-4">
             <Button onClick={() => setIsDialogOpen(true)} disabled={isDownloading} className="flex-grow">
               <Download className="h-4 w-4 mr-2" />
-              Baixar ZIP
+              Download ZIP
             </Button>
             <Button variant="outline" onClick={onClear} disabled={isDownloading}>
               <Trash2 className="h-4 w-4 mr-2" />
-              Limpar
+              Clear
             </Button>
           </div>
         </SheetContent>

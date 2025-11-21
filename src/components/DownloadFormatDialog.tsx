@@ -26,7 +26,7 @@ export const DownloadFormatDialog = ({ open, onOpenChange, onDownload, isDownloa
 
   const handleDownloadClick = () => {
     if (!format) {
-      showError("Por favor, selecione um formato.");
+      showError("Please select a format.");
       return;
     }
     onDownload(format);
@@ -36,31 +36,31 @@ export const DownloadFormatDialog = ({ open, onOpenChange, onDownload, isDownloa
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Escolha o Formato do Ícone</DialogTitle>
+          <DialogTitle>Choose Icon Format</DialogTitle>
           <DialogDescription>
-            Selecione o formato de arquivo para baixar os ícones no arquivo ZIP.
+            Select the file format to download the icons in the ZIP archive.
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <RadioGroup value={format} onValueChange={(value: DownloadFormat) => setFormat(value)}>
             <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-accent">
               <RadioGroupItem value="svg" id="r1" />
-              <Label htmlFor="r1" className="cursor-pointer flex-grow">SVG (Vetor, recomendado)</Label>
+              <Label htmlFor="r1" className="cursor-pointer flex-grow">SVG (Vector, recommended)</Label>
             </div>
             <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-accent">
               <RadioGroupItem value="png" id="r2" />
-              <Label htmlFor="r2" className="cursor-pointer flex-grow">PNG (Imagem, 256x256px)</Label>
+              <Label htmlFor="r2" className="cursor-pointer flex-grow">PNG (Image, 256x256px)</Label>
             </div>
             <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-accent">
               <RadioGroupItem value="ico" id="r3" />
-              <Label htmlFor="r3" className="cursor-pointer flex-grow">ICO (Ícone do Windows)</Label>
+              <Label htmlFor="r3" className="cursor-pointer flex-grow">ICO (Windows Icon)</Label>
             </div>
           </RadioGroup>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={handleDownloadClick} disabled={isDownloading}>
-            {isDownloading ? 'Baixando...' : 'Confirmar e Baixar'}
+            {isDownloading ? 'Downloading...' : 'Confirm and Download'}
           </Button>
         </DialogFooter>
       </DialogContent>

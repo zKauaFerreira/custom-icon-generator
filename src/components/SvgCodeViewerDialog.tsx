@@ -29,20 +29,20 @@ interface SvgCodeViewerDialogProps {
   resolution: number;
 }
 
-// Função utilitária para colorir o SVG e formatar (indentação simples)
+// Utility function to colorize and format the SVG (simple indentation)
 const formatAndColorizeSvg = (svgText: string, color: string): string => {
-  // 1. Colorir o SVG
+  // 1. Colorize the SVG
   const parser = new DOMParser();
   const doc = parser.parseFromString(svgText, "image/svg+xml");
   doc.documentElement.setAttribute('fill', color);
   const serializer = new XMLSerializer();
   const coloredSvg = serializer.serializeToString(doc.documentElement);
 
-  // 2. Formatar (indentação básica)
+  // 2. Format (basic indentation)
   let formatted = coloredSvg.replace(/>\s*</g, '><'); // Remove whitespace between tags
   formatted = formatted.replace(/></g, '>\n<'); // Add newline between tags
   
-  // 3. Adicionar classes de cor para visualização (simulação de IDE)
+  // 3. Add color classes for visualization (IDE simulation)
   formatted = formatted.replace(/<svg/g, '<span class="text-purple-400">&lt;svg</span>');
   formatted = formatted.replace(/<\/svg>/g, '<span class="text-purple-400">&lt;/svg&gt;</span>');
   formatted = formatted.replace(/<path/g, '\n  <span class="text-purple-400">&lt;path</span>');
@@ -57,7 +57,7 @@ const formatAndColorizeSvg = (svgText: string, color: string): string => {
   return formatted;
 };
 
-// Função utilitária para obter o SVG colorido puro para cópia/download
+// Utility function to get the pure colored SVG string for copy/download
 const getColoredSvgString = (svgText: string, color: string): string => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(svgText, "image/svg+xml");
@@ -68,15 +68,15 @@ const getColoredSvgString = (svgText: string, color: string): string => {
 
 
 export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, onOpenChange, icon, svgContent, color, resolution }) => {
-  // Estado local para a cor, inicializado com a cor da prop
+  // Local state for color, initialized with the prop color
   const [localColor, setLocalColor] = useState(color);
 
-  // Resetar a cor local quando o modal abrir ou a cor da prop mudar
+  // Reset local color when the modal opens or the prop color changes
   useEffect(() => {
     setLocalColor(color);
   }, [color, open]);
 
-  // Recalcula o SVG colorido e formatado apenas quando o svgContent ou localColor mudar
+  // Recalculate colored and formatted SVG only when svgContent or localColor changes
   const { coloredSvgString, formattedHtml } = useMemo(() => {
     const coloredSvgString = getColoredSvgString(svgContent, localColor);
     const formattedHtml = formatAndColorizeSvg(svgContent, localColor);
@@ -87,23 +87,23 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
   const handleCopySvg = async () => {
     try {
       await navigator.clipboard.writeText(coloredSvgString);
-      showSuccess("Código SVG copiado para a área de transferência!");
+      showSuccess("SVG code copied to clipboard!");
     } catch (err) {
       console.error('Failed to copy SVG:', err);
-      showError("Falha ao copiar o código SVG.");
+      showError("Failed to copy SVG code.");
     }
   };
 
   const handleDownloadSvg = () => {
     try {
-      // Usa a cor local para o nome do arquivo e o conteúdo
+      // Use local color for file name and content
       const cleanColor = localColor.substring(1);
       const blob = new Blob([coloredSvgString], { type: 'image/svg+xml;charset=utf-8' });
       saveAs(blob, `${icon.slug}-${cleanColor}.svg`);
-      showSuccess("Download SVG iniciado!");
+      showSuccess("SVG download started!");
     } catch (error) {
       console.error('Failed to download SVG:', error);
-      showError("Falha ao baixar o SVG.");
+      showError("Failed to download SVG.");
     }
   };
 
@@ -112,9 +112,9 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
       <DialogContent className="max-w-4xl w-[90vw] h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            Visualizar Código SVG: {icon.title}
+            View SVG Code: {icon.title}
             
-            {/* Color Picker Integrado */}
+            {/* Integrated Color Picker */}
             <div className="h-6 w-6">
               <ColorPicker 
                   value={localColor} 
@@ -125,29 +125,29 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
             </div>
           </DialogTitle>
           <DialogDescription>
-            Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold" style={{ color: localColor }}>{localColor}</span>).
+            SVG code colored with the selected color (<span className="font-mono font-semibold" style={{ color: localColor }}>{localColor}</span>).
           </DialogDescription>
         </DialogHeader>
         
         <div className="flex gap-4 flex-grow min-h-0">
           
-          {/* Coluna Esquerda: Preview e Info - Usando min-w e flex-shrink-0 */}
+          {/* Left Column: Preview and Info - Using min-w and flex-shrink-0 */}
           <div className="flex flex-col gap-4 flex-grow-0 flex-shrink-0 basis-auto min-w-[200px] max-w-[300px]"> 
             
-            {/* Painel de Pré-visualização */}
+            {/* Preview Panel */}
             <div className="flex flex-col items-center p-4 border rounded-md bg-muted/50 flex-grow justify-center">
               <div
                 className="w-24 h-24 mb-4"
                 dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, localColor) }}
               />
-              <p className="text-sm text-muted-foreground text-center">Pré-visualização</p>
+              <p className="text-sm text-muted-foreground text-center">Preview</p>
             </div>
 
-            {/* Card de Informações */}
+            {/* Information Card */}
             <IconInfoCard icon={icon} onColorSelect={setLocalColor} />
           </div>
 
-          {/* Visualizador de Código - Ocupa o espaço restante */}
+          {/* Code Viewer - Takes up the remaining space */}
           <div className="flex-grow bg-gray-900 rounded-md overflow-hidden border border-gray-700">
             <ScrollArea className="h-full p-4 text-sm font-mono text-white">
               <pre className="whitespace-pre-wrap break-words">
@@ -160,11 +160,11 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         <div className="flex justify-end gap-2 pt-4">
           <Button onClick={handleDownloadSvg}>
             <Download className="h-4 w-4 mr-2" />
-            Baixar SVG
+            Download SVG
           </Button>
           <Button variant="outline" onClick={handleCopySvg}>
             <Copy className="h-4 w-4 mr-2" />
-            Copiar Código SVG
+            Copy SVG Code
           </Button>
         </div>
       </DialogContent>

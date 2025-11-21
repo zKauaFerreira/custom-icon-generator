@@ -87,7 +87,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
 
   const handleDownload = async (format: 'svg' | 'png' | 'ico') => {
     if (!svgContent) {
-      showError("Conteúdo do ícone ainda não carregado.");
+      showError("Icon content not loaded yet.");
       return;
     }
 
@@ -104,10 +104,10 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
         const coloredSvg = serializer.serializeToString(doc.documentElement);
         blob = new Blob([coloredSvg], { type: 'image/svg+xml;charset=utf-8' });
       } else if (format === 'png') {
-        // PNG usa a resolução
+        // PNG uses resolution
         blob = await svgToPng(svgContent, resolution, color); 
       } else { // ico
-        // ICO usa a resolução (embora a função interna possa gerar múltiplas)
+        // ICO uses resolution (although the internal function may generate multiple)
         blob = await svgToIco(svgContent, color);
       }
       
@@ -115,7 +115,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
       triggerDownload(url, fileName);
     } catch (error) {
       console.error(`Failed to download as ${format}:`, error);
-      showError(`Falha ao baixar como ${format.toUpperCase()}.`);
+      showError(`Failed to download as ${format.toUpperCase()}.`);
     }
   };
 
@@ -127,7 +127,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
 
   return (
     <>
-      {/* Removendo o onClick principal do Card */}
+      {/* Removing the main Card onClick */}
       <Card className="flex flex-col relative bg-card transition-shadow hover:shadow-lg">
         <div className="absolute top-3 right-3 z-10">
           <Tooltip>
@@ -139,7 +139,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
               />
             </TooltipTrigger>
             <TooltipContent>
-              <p>Selecionar</p>
+              <p>Select</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -172,7 +172,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
         <CardFooter className="flex flex-wrap justify-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              {/* Adicionando o onClick para abrir o modal aqui */}
+              {/* Adding onClick to open the modal here */}
               <Button 
                 size="sm" 
                 variant="outline" 
@@ -182,19 +182,19 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
                 SVG
               </Button>
             </TooltipTrigger>
-            <TooltipContent><p>Visualizar Código / Baixar SVG</p></TooltipContent>
+            <TooltipContent><p>View Code / Download SVG</p></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button size="sm" variant="outline" onClick={() => handleDownload('png')} disabled={loading || !svgContent}>PNG</Button>
             </TooltipTrigger>
-            <TooltipContent><p>Baixar como PNG ({resolution}x{resolution})</p></TooltipContent>
+            <TooltipContent><p>Download as PNG ({resolution}x{resolution})</p></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button size="sm" variant="outline" onClick={() => handleDownload('ico')} disabled={loading || !svgContent}>ICO</Button>
             </TooltipTrigger>
-            <TooltipContent><p>Baixar como ICO (Múltiplas resoluções)</p></TooltipContent>
+            <TooltipContent><p>Download as ICO (Multiple resolutions)</p></TooltipContent>
           </Tooltip>
         </CardFooter>
       </Card>

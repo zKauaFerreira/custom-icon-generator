@@ -1,10 +1,10 @@
 import { Canvg } from 'canvg';
 
 /**
- * Prepara uma string SVG para renderização, adicionando a cor de preenchimento.
- * @param svgText A string SVG original.
- * @param color A cor de preenchimento a ser aplicada.
- * @returns A string SVG colorida.
+ * Prepares an SVG string for rendering by adding the fill color.
+ * @param svgText The original SVG string.
+ * @param color The fill color to be applied.
+ * @returns The colored SVG string.
  */
 const colorizeSvg = (svgText: string, color: string): string => {
   const parser = new DOMParser();
@@ -16,10 +16,10 @@ const colorizeSvg = (svgText: string, color: string): string => {
 };
 
 /**
- * Converte uma string SVG em um Blob PNG de um tamanho específico.
- * @param svgText A string SVG (já colorida).
- * @param size A largura e altura da imagem PNG.
- * @returns Uma Promise que resolve para um Blob PNG.
+ * Converts an SVG string into a PNG Blob of a specific size.
+ * @param svgText The SVG string (already colored).
+ * @param size The width and height of the PNG image.
+ * @returns A Promise that resolves to a PNG Blob.
  */
 async function svgToPngBlob(svgText: string, size: number): Promise<Blob> {
   const canvas = document.createElement('canvas');
@@ -40,11 +40,11 @@ async function svgToPngBlob(svgText: string, size: number): Promise<Blob> {
 }
 
 /**
- * Função exportada para converter SVG para PNG, mantendo a interface do componente.
- * @param svgText O SVG original.
- * @param size O tamanho do PNG.
- * @param color A cor a ser aplicada.
- * @returns Uma Promise que resolve para um Blob PNG.
+ * Exported function to convert SVG to PNG, maintaining the component interface.
+ * @param svgText The original SVG.
+ * @param size The PNG size.
+ * @param color The color to be applied.
+ * @returns A Promise that resolves to a PNG Blob.
  */
 export const svgToPng = async (svgText: string, size: number, color: string): Promise<Blob> => {
   const coloredSvg = colorizeSvg(svgText, color);
@@ -52,10 +52,10 @@ export const svgToPng = async (svgText: string, size: number, color: string): Pr
 };
 
 /**
- * Converte uma string SVG em um Blob ICO, montando o arquivo manualmente.
- * @param svgText O SVG original (sem cor).
- * @param color A cor a ser aplicada a todas as imagens.
- * @returns Uma Promise que resolve para um Blob ICO.
+ * Converts an SVG string into an ICO Blob, manually assembling the file.
+ * @param svgText The original SVG (uncolored).
+ * @param color The color to be applied to all images.
+ * @returns A Promise that resolves to an ICO Blob.
  */
 export const svgToIco = async (svgText: string, color: string): Promise<Blob> => {
   const coloredSvg = colorizeSvg(svgText, color);

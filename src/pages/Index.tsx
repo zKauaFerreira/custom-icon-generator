@@ -54,24 +54,24 @@ const Index = () => {
   const [sortBy, setSortBy] = useState<'random' | 'az' | 'za'>('random');
   const [selectedIcons, setSelectedIcons] = useState(new Set<string>());
   const [resolution, setResolution] = useState(() => {
-    // Inicializa a resolução a partir do localStorage
+    // Initialize resolution from localStorage
     if (typeof window !== 'undefined') {
       const storedResolution = localStorage.getItem(RESOLUTION_STORAGE_KEY);
       if (storedResolution) {
         const parsedResolution = parseInt(storedResolution, 10);
-        // Garante que o valor lido seja um número positivo
+        // Ensure the read value is a positive number
         if (!isNaN(parsedResolution) && parsedResolution > 0) {
           return parsedResolution;
         }
       }
     }
-    return 256; // Fallback padrão
+    return 256; // Default fallback
   });
   const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false);
   
   const lenis = useLenis();
   
-  // Hook para Placeholder Dinâmico
+  // Hook for Dynamic Placeholder
   const dynamicPlaceholder = useDynamicPlaceholder(iconList);
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const Index = () => {
     setShuffledIcons(shuffleArray(iconList));
   }, []);
   
-  // Garante que a página comece no topo imediatamente na montagem (após F5)
+  // Ensures the page starts at the top immediately on mount (after F5)
   useEffect(() => {
     if (lenis) {
       lenis.scrollTo(0, { immediate: true });
@@ -118,14 +118,14 @@ const Index = () => {
 
   const handleResolutionChange = (newResolution: number) => {
     setResolution(newResolution);
-    // Salva a nova resolução no localStorage
+    // Save the new resolution to localStorage
     localStorage.setItem(RESOLUTION_STORAGE_KEY, newResolution.toString());
   };
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     if (lenis) {
-      // Rola suavemente para o topo
+      // Smooth scroll to top
       lenis.scrollTo(0, { duration: 0.5 });
     }
   };
@@ -147,12 +147,12 @@ const Index = () => {
 
     const query = searchQuery.toLowerCase();
 
-    // 1. Filtra todos os ícones que contêm a query
+    // 1. Filter all icons that contain the query
     const matches = sortedIcons.filter((icon) =>
       icon.title.toLowerCase().includes(query) || icon.slug.toLowerCase().includes(query)
     );
 
-    // 2. Classifica os resultados
+    // 2. Sort results
     matches.sort((a, b) => {
       const aTitle = a.title.toLowerCase();
       const bTitle = b.title.toLowerCase();
@@ -162,11 +162,11 @@ const Index = () => {
       const aStarts = aTitle.startsWith(query) || aSlug.startsWith(query);
       const bStarts = bTitle.startsWith(query) || bSlug.startsWith(query);
 
-      // Prioriza quem começa com a query
+      // Prioritize those that start with the query
       if (aStarts && !bStarts) return -1;
       if (!aStarts && bStarts) return 1;
 
-      // Se ambos começam ou nenhum começa, ordena alfabeticamente pelo título
+      // If both start or neither starts, sort alphabetically by title
       return aTitle.localeCompare(bTitle);
     });
 
@@ -183,9 +183,9 @@ const Index = () => {
   return (
     <div className="container mx-auto p-4 md:p-8">
       <header className="text-center mb-8">
-        <h1 className="text-4xl font-bold tracking-tight">Gerador de Ícones Personalizados</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Custom Icon Generator</h1>
         <p className="text-muted-foreground mt-2">
-          Pesquise, selecione, personalize e baixe ícones no formato que precisar.
+          Search, select, customize, and download icons in the format you need.
         </p>
       </header>
 
@@ -195,10 +195,10 @@ const Index = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
               type="text"
-              placeholder={dynamicPlaceholder} // Usando o placeholder dinâmico
+              placeholder={dynamicPlaceholder} // Using dynamic placeholder
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={searchQuery ? "pl-10 pr-10" : "pl-10"} // Ajusta o padding direito se houver texto
+              className={searchQuery ? "pl-10 pr-10" : "pl-10"} // Adjust right padding if there is text
             />
             {searchQuery && (
               <Button
@@ -206,23 +206,23 @@ const Index = () => {
                 size="icon"
                 onClick={() => setSearchQuery("")}
                 className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground hover:bg-transparent p-0"
-                aria-label="Limpar pesquisa"
+                aria-label="Clear search"
               >
                 <X className="h-4 w-4" />
               </Button>
             )}
           </div>
           
-          {/* Controles: Esquerda (Cores), Centro (Resolução), Direita (Filtros) */}
+          {/* Controls: Left (Colors), Center (Resolution), Right (Filters) */}
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             
-            {/* Esquerda: Cores e Ações */}
+            {/* Left: Colors and Actions */}
             <div className="flex items-center gap-2 flex-wrap">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div><ColorPicker value={color} onChange={setColor} /></div>
                 </TooltipTrigger>
-                <TooltipContent><p>Selecionar Cor</p></TooltipContent>
+                <TooltipContent><p>Select Color</p></TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -230,7 +230,7 @@ const Index = () => {
                     <Shuffle className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Cor Aleatória</TooltipContent>
+                <TooltipContent>Random Color</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -238,7 +238,7 @@ const Index = () => {
                     <Bookmark className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Salvar Cor</TooltipContent>
+                <TooltipContent>Save Color</TooltipContent>
               </Tooltip>
               
               <div className="flex gap-2 flex-wrap ml-2">
@@ -253,7 +253,7 @@ const Index = () => {
                           aria-label={`Select color ${recentColor}`}
                         />
                       </TooltipTrigger>
-                      <TooltipContent><p>Usar cor {recentColor}</p></TooltipContent>
+                      <TooltipContent><p>Use color {recentColor}</p></TooltipContent>
                     </Tooltip>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -265,14 +265,14 @@ const Index = () => {
                           <X className="h-3 w-3" />
                         </button>
                       </TooltipTrigger>
-                      <TooltipContent><p>Remover cor</p></TooltipContent>
+                      <TooltipContent><p>Remove color</p></TooltipContent>
                     </Tooltip>
                   </div>
                 ))}
               </div>
             </div>
             
-            {/* Centro: Botão de Configuração de Resolução */}
+            {/* Center: Resolution Settings Button */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" onClick={() => setIsResolutionDialogOpen(true)} className="flex items-center gap-2">
@@ -280,34 +280,34 @@ const Index = () => {
                   {resolution}x{resolution}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent><p>Configurar Resolução PNG/ICO</p></TooltipContent>
+              <TooltipContent><p>Configure PNG/ICO Resolution</p></TooltipContent>
             </Tooltip>
 
-            {/* Direita: Ordenação */}
+            {/* Right: Sorting */}
             <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente">
+                  <ToggleGroupItem value="random" aria-label="Sort randomly">
                     <Shuffle className="h-4 w-4" />
                   </ToggleGroupItem>
                 </TooltipTrigger>
-                <TooltipContent>Aleatório</TooltipContent>
+                <TooltipContent>Random</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <ToggleGroupItem value="az" aria-label="Ordenar de A a Z" className="whitespace-nowrap">
+                  <ToggleGroupItem value="az" aria-label="Sort A to Z" className="whitespace-nowrap">
                     A-Z
                   </ToggleGroupItem>
                 </TooltipTrigger>
-                <TooltipContent>Ordem Alfabética</TooltipContent>
+                <TooltipContent>Alphabetical Order</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <ToggleGroupItem value="za" aria-label="Ordenar de Z a A" className="whitespace-nowrap">
+                  <ToggleGroupItem value="za" aria-label="Sort Z to A" className="whitespace-nowrap">
                     Z-A
                   </ToggleGroupItem>
                 </TooltipTrigger>
-                <TooltipContent>Ordem Alfabética Inversa</TooltipContent>
+                <TooltipContent>Reverse Alphabetical Order</TooltipContent>
               </Tooltip>
             </ToggleGroup>
           </div>
@@ -321,7 +321,7 @@ const Index = () => {
                   key={icon.slug} 
                   icon={icon} 
                   color={color} 
-                  resolution={resolution} // Passando a resolução
+                  resolution={resolution} // Passing resolution
                   isSelected={selectedIcons.has(icon.slug)}
                   onSelect={handleSelectIcon}
                 />
@@ -341,11 +341,11 @@ const Index = () => {
                         className={currentPage === 1 ? "pointer-events-none opacity-50" : ""} 
                       />
                     </TooltipTrigger>
-                    <TooltipContent><p>Página Anterior</p></TooltipContent>
+                    <TooltipContent><p>Previous Page</p></TooltipContent>
                   </Tooltip>
                 </PaginationItem>
                 <PaginationItem>
-                  <span className="px-4 py-2 text-sm font-medium">Página {currentPage} de {pageCount}</span>
+                  <span className="px-4 py-2 text-sm font-medium">Page {currentPage} of {pageCount}</span>
                 </PaginationItem>
                 <PaginationItem>
                   <Tooltip>
@@ -359,7 +359,7 @@ const Index = () => {
                         className={currentPage === pageCount ? "pointer-events-none opacity-50" : ""} 
                       />
                     </TooltipTrigger>
-                    <TooltipContent><p>Próxima Página</p></TooltipContent>
+                    <TooltipContent><p>Next Page</p></TooltipContent>
                   </Tooltip>
                 </PaginationItem>
               </PaginationContent>
@@ -367,7 +367,7 @@ const Index = () => {
           </>
         ) : (
           <div className="text-center py-16">
-            <p className="text-muted-foreground">Nenhum ícone encontrado para "{searchQuery}".</p>
+            <p className="text-muted-foreground">No icons found for "{searchQuery}".</p>
           </div>
         )}
       </main>
@@ -376,7 +376,7 @@ const Index = () => {
         selectedIcons={selectedIcons}
         allIcons={iconList}
         color={color}
-        resolution={resolution} // Passando a resolução
+        resolution={resolution} // Passing resolution
         onClear={() => setSelectedIcons(new Set())}
         onRemoveIcon={handleSelectIcon}
       />
@@ -387,7 +387,7 @@ const Index = () => {
         open={isResolutionDialogOpen}
         onOpenChange={setIsResolutionDialogOpen}
         currentResolution={resolution}
-        onResolutionChange={handleResolutionChange} // Usando a nova função
+        onResolutionChange={handleResolutionChange} // Using the new function
       />
     </div>
   );

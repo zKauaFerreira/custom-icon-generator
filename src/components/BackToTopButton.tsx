@@ -9,7 +9,7 @@ export const BackToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => {
-    // Lenis atualiza window.pageYOffset, então podemos usá-lo
+    // Lenis updates window.pageYOffset, so we can use it
     if (window.pageYOffset > 300) {
       setIsVisible(true);
     } else {
@@ -19,7 +19,7 @@ export const BackToTopButton = () => {
 
   const scrollToTop = () => {
     if (lenis) {
-      // Usa o método scrollTo do Lenis
+      // Use Lenis scrollTo method
       lenis.scrollTo(0, { duration: 0.5 });
     }
   };
@@ -48,7 +48,7 @@ export const BackToTopButton = () => {
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Voltar ao topo</p>
+          <p>Back to top</p>
         </TooltipContent>
       </Tooltip>
     </div>

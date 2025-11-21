@@ -62,7 +62,7 @@ export const SelectedIconItem: React.FC<SelectedIconItemProps> = ({ icon, onRemo
       </div>
       <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0" onClick={() => onRemove(icon.slug)}>
         <X className="h-4 w-4" />
-        <span className="sr-only">Remover {icon.title}</span>
+        <span className="sr-only">Remove {icon.title}</span>
       </Button>
     </div>
   );
