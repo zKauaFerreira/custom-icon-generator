@@ -13,9 +13,8 @@ const __dirname = path.dirname(__filename);
 // package.json da autorun (onde o script roda)
 const autorunPackagePath = path.resolve(__dirname, "./package.json");
 
-// package.json da MAIN (passado pelo workflow)
-const mainPath = process.env.MAIN_PATH;
-const mainPackagePath = path.join(mainPath, "package.json");
+// package.json da MAIN (checkout feito em ./main)
+const mainPackagePath = path.resolve(__dirname, "../main/package.json");
 
 /* =====================================================
    1. PEGAR VERSÃO MAIS RECENTE DO SIMPLE-ICONS
@@ -38,7 +37,7 @@ async function commitToGitHub(updatedContentMain) {
     const token = process.env.PAT_TOKEN;
     const owner = process.env.REPO_OWNER;
     const repo = process.env.REPO_NAME;
-    const branch = process.env.TARGET_BRANCH; // normalmente main
+    const branch = process.env.TARGET_BRANCH;
 
     if (!token || !owner || !repo || !branch) {
         console.error("❌ Missing environment variables for GitHub commit");
@@ -47,20 +46,20 @@ async function commitToGitHub(updatedContentMain) {
 
     const apiBase = `https://api.github.com/repos/${owner}/${repo}`;
 
-    // 1. pegar último commit da main
+    // pegar último commit da main
     const refRes = await fetch(`${apiBase}/git/ref/heads/${branch}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     const refData = await refRes.json();
     const latestCommitSha = refData.object.sha;
 
-    // 2. pegar commit para extrair a tree
+    // pegar commit para extrair a tree
     const commitRes = await fetch(`${apiBase}/git/commits/${latestCommitSha}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     const commitData = await commitRes.json();
 
-    // 3. criar blob com novo package.json
+    // criar blob com novo package.json
     const blobRes = await fetch(`${apiBase}/git/blobs`, {
         method: "POST",
         headers: {
@@ -74,7 +73,7 @@ async function commitToGitHub(updatedContentMain) {
     });
     const blobData = await blobRes.json();
 
-    // 4. criar nova tree
+    // criar nova tree
     const treeRes = await fetch(`${apiBase}/git/trees`, {
         method: "POST",
         headers: {
@@ -95,7 +94,7 @@ async function commitToGitHub(updatedContentMain) {
     });
     const treeData = await treeRes.json();
 
-    // 5. criar commit
+    // criar commit
     const newCommitRes = await fetch(`${apiBase}/git/commits`, {
         method: "POST",
         headers: {
@@ -110,7 +109,7 @@ async function commitToGitHub(updatedContentMain) {
     });
     const newCommitData = await newCommitRes.json();
 
-    // 6. mover ponteiro da main
+    // atualizar ponteiro da branch main
     await fetch(`${apiBase}/git/refs/heads/${branch}`, {
         method: "PATCH",
         headers: {
@@ -129,7 +128,7 @@ async function commitToGitHub(updatedContentMain) {
    3. LÓGICA PRINCIPAL
 ===================================================== */
 async function main() {
-    // === LER AMBOS PACKAGE.JSON ===
+    // ler ambos package.json
     const autorunRaw = await fs.readFile(autorunPackagePath, "utf8");
     const mainRaw = await fs.readFile(mainPackagePath, "utf8");
 
@@ -148,7 +147,7 @@ async function main() {
 
     console.log("Current:", currentVersion, "| Latest:", latestVersion);
 
-    // === COMPARAÇÃO ===
+    // comparação
     if (currentVersion !== latestVersion) {
         console.log(`🚨 Nova versão detectada! Atualizando para ^${latestVersion}`);
 
@@ -163,7 +162,7 @@ async function main() {
         await fs.writeFile(mainPackagePath, updatedMainContent);
         await fs.writeFile(autorunPackagePath, updatedAutorunContent);
 
-        // commit NA MAIN
+        // commit na main
         await commitToGitHub(updatedMainContent);
 
         process.exit(1);
