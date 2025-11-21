@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ICO } from 'icojs';
+import ICO from 'icojs';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

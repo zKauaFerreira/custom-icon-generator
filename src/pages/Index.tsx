@@ -4,6 +4,7 @@ import { IconCard } from "@/components/IconCard";
 import { ColorSelector } from "@/components/ColorSelector";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import * as allSimpleIcons from 'simple-icons';
+import type { SimpleIcon } from 'simple-icons';
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
@@ -17,7 +18,7 @@ export interface IconData {
 }
 
 const iconList: IconData[] = Object.values(allSimpleIcons)
-  .filter((icon): icon is { title: string; slug: string } => 
+  .filter((icon): icon is SimpleIcon => 
     typeof icon === 'object' && icon !== null && 'title' in icon
   )
   .map(icon => ({
