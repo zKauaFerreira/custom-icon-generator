@@ -39,13 +39,17 @@ type PaginationLinkProps = {
 } & Pick<ButtonProps, "size"> &
   React.ComponentProps<"a">
 
-const PaginationLink = ({
+const PaginationLink = React.forwardRef<
+  HTMLAnchorElement,
+  PaginationLinkProps
+>(({
   className,
   isActive,
   size = "icon",
   ...props
-}: PaginationLinkProps) => (
+}, ref) => (
   <a
+    ref={ref}
     aria-current={isActive ? "page" : undefined}
     className={cn(
       buttonVariants({
@@ -56,7 +60,7 @@ const PaginationLink = ({
     )}
     {...props}
   />
-)
+))
 PaginationLink.displayName = "PaginationLink"
 
 const PaginationPrevious = React.forwardRef<
