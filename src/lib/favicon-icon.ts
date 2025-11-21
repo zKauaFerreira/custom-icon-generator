@@ -24,3 +24,12 @@ export const CUSTOM_FAVICON_SVG = `
 </g>
 </svg>
 `;
+
+/**
+ * Generates a base64 Data URL for the default (black) favicon SVG.
+ */
+export const getBaseFaviconDataUrl = (): string => {
+  // Encode the SVG content for use in a Data URL
+  const encodedSvg = encodeURIComponent(CUSTOM_FAVICON_SVG.trim());
+  return `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
+};
