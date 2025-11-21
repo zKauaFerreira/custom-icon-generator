@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>dyad-generated-app</title>
     <script>
-      // Força a rolagem para o topo imediatamente para evitar que o navegador restaure a posição anterior após F5.
-      window.onload = function() {
-        window.scrollTo(0, 0);
-      };
+      // Desativa a restauração de rolagem nativa do navegador para que o Lenis e o React controlem a posição.
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      // Garante que a rolagem esteja no topo imediatamente.
+      window.scrollTo(0, 0);
     </script>
   </head>
 
