@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { IconCard } from "@/components/IconCard";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import * as allSimpleIcons from 'simple-icons';
 import type { SimpleIcon } from 'simple-icons';
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
