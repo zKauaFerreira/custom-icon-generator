@@ -7,18 +7,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /* =====================================================
-   PATHS DAS DUAS BRANCHES
+    PATHS DAS DUAS BRANCHES
 ===================================================== */
 
 // package.json da autorun (onde o script roda)
 const autorunPackagePath = path.resolve(__dirname, "./package.json");
 
-// package.json da MAIN (passado pelo workflow)
+// Caminho da branch MAIN (passado pelo workflow)
 const mainPath = process.env.MAIN_PATH;
 const mainPackagePath = path.join(mainPath, "package.json");
 
 /* =====================================================
-   1. PEGAR VERSÃO MAIS RECENTE DO SIMPLE-ICONS
+    1. PEGAR VERSÃO MAIS RECENTE DO SIMPLE-ICONS
 ===================================================== */
 async function getLatestVersion() {
     try {
@@ -32,14 +32,9 @@ async function getLatestVersion() {
 }
 
 /* =====================================================
-   2. FAZER O COMMIT NA MAIN
+    2. FAZER O COMMIT NA MAIN (RECEBENDO ENVS POR ARGUMENTO)
 ===================================================== */
-async function commitToGitHub(updatedContentMain) {
-    const token = process.env.PAT_TOKEN;
-    const owner = process.env.REPO_OWNER;
-    const repo = process.env.REPO_NAME;
-    const branch = process.env.TARGET_BRANCH; // normalmente main
-
+async function commitToGitHub(updatedContentMain, token, owner, repo, branch) {
     if (!token || !owner || !repo || !branch) {
         console.error("❌ Missing environment variables for GitHub commit");
         return;
@@ -126,7 +121,7 @@ async function commitToGitHub(updatedContentMain) {
 }
 
 /* =====================================================
-   3. LÓGICA PRINCIPAL
+    3. LÓGICA PRINCIPAL
 ===================================================== */
 async function main() {
     // === LER AMBOS PACKAGE.JSON ===
@@ -163,8 +158,14 @@ async function main() {
         await fs.writeFile(mainPackagePath, updatedMainContent);
         await fs.writeFile(autorunPackagePath, updatedAutorunContent);
 
-        // commit NA MAIN
-        await commitToGitHub(updatedMainContent);
+        // PEGAR VARIÁVEIS DE AMBIENTE AQUI
+        const token = process.env.PAT_TOKEN;
+        const owner = process.env.REPO_OWNER;
+        const repo = process.env.REPO_NAME;
+        const branch = process.env.TARGET_BRANCH;
+
+        // commit NA MAIN, PASSANDO AS VARIÁVEIS
+        await commitToGitHub(updatedMainContent, token, owner, repo, branch);
 
         process.exit(1);
     } else {
