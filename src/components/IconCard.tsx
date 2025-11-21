@@ -144,7 +144,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
         />
       </div>
       <CardHeader>
-        <CardTitle className="truncate pr-8">{icon.title}</CardTitle>
+        <CardTitle className="truncate pr-8 leading-normal">{icon.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md" style={{ backgroundColor: previewBg }}>
         {loading ? (
