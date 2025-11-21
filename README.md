@@ -91,19 +91,19 @@ We use the official Simple Icons library.
   <tr>
     <td align="center" width="180">
       <a href="https://react.dev/">
-        <img src="https://skillicons.dev/icons?i=react" alt="React" width="60" height="60">
+        <img src="./public/tech-icons/react.svg" alt="React" width="60" height="60">
         <br>React
       </a>
     </td>
     <td align="center" width="180">
       <a href="https://www.typescriptlang.org/">
-        <img src="https://skillicons.dev/icons?i=ts" alt="TypeScript" width="60" height="60">
+        <img src="./public/tech-icons/typescript.svg" alt="TypeScript" width="60" height="60">
         <br>TypeScript
       </a>
     </td>
     <td align="center" width="180">
       <a href="https://tailwindcss.com/">
-        <img src="https://skillicons.dev/icons?i=tailwind" alt="Tailwind CSS" width="60" height="60">
+        <img src="./public/tech-icons/tailwindcss.svg" alt="Tailwind CSS" width="60" height="60">
         <br>Tailwind CSS
       </a>
     </td>
