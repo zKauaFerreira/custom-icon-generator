@@ -1,11 +1,11 @@
-# ✨ Custom Simple Icon Generator ✨
+# ✨ Custom Icon Generator ✨
 
 <p align="center">
   <img src="https://img.shields.io/badge/Powered%20by-Simple%20Icons-blue?style=for-the-badge&logo=simple-icons&logoColor=white" alt="Simple Icons Badge">
   <img src="https://img.shields.io/badge/Built%20with-React%20%26%20Tailwind-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React Badge">
 </p>
 
-The **Custom Simple Icon Generator** is a fast, responsive web application designed to empower developers and designers. It allows you to effortlessly search, customize, and download thousands of popular brand icons from the Simple Icons library in various formats (SVG, PNG, ICO) and any color you desire.
+The **Custom Icon Generator** is a fast, responsive web application designed to empower developers and designers. It allows you to effortlessly search, customize, and download thousands of popular brand icons from the Simple Icons library in various formats (SVG, PNG, ICO) and any color you desire.
 
 ---
 
@@ -63,7 +63,7 @@ Each icon card provides quick download buttons:
 #### B. Batch Download (ZIP Archive)
 1.  **Selection:** Use the checkbox ✅ on the top right of each icon card to select it.
 2.  **Batch Sheet:** A floating button appears when 2+ icons are selected. Click it to open the batch panel 📦.
-3.  **Download:** Choose your desired format (SVG, PNG, or ICO) and download all selected icons in a single compressed `.zip` file 💾.
+3.  **Download:** Choose your desired format (SVG, PNG, or ICO) and download them all efficiently in a single ZIP file 💾.
 
 ---
 
