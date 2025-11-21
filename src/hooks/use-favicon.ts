@@ -14,7 +14,6 @@ export function useFavicon(color: string) {
   const coloredSvg = useMemo(() => {
     // Replace all fill attributes with the current color
     // Note: The provided SVG uses fill="#000000" which we need to replace.
-    // We also ensure the SVG is properly formatted for Canvg.
     return CUSTOM_FAVICON_SVG.replace(/fill="#000000"/g, `fill="${color}"`);
   }, [color]);
 
@@ -31,10 +30,22 @@ export function useFavicon(color: string) {
       return;
     }
 
-    let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+    // 1. Find or create the dynamic favicon link element
+    // We use a data attribute to reliably find the link we created.
+    let link: HTMLLinkElement | null = document.querySelector("link[rel='icon'][data-dynamic='true']") as HTMLLinkElement;
+    
     if (!link) {
+      // Remove any existing default favicon links (like the static favicon.ico) to prevent conflicts
+      document.querySelectorAll("link[rel*='icon']").forEach(existingLink => {
+        if (!existingLink.getAttribute('data-dynamic')) {
+          existingLink.remove();
+        }
+      });
+      
       link = document.createElement('link');
       link.rel = 'icon';
+      link.type = 'image/png'; // Explicitly set type for better browser handling
+      link.setAttribute('data-dynamic', 'true'); // Mark as dynamic link
       document.getElementsByTagName('head')[0].appendChild(link);
     }
 
