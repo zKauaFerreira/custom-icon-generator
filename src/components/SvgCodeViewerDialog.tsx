@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { IconInfoCard } from './IconInfoCard';
 
 interface SvgCodeViewerDialogProps {
   open: boolean;
@@ -139,13 +140,21 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         </DialogHeader>
         
         <div className="flex gap-4 flex-grow min-h-0">
-          {/* Painel de Pré-visualização */}
-          <div className="w-1/4 flex flex-col items-center p-4 border rounded-md bg-muted/50 self-start">
-            <div
-              className="w-24 h-24 mb-4"
-              dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, localColor) }}
-            />
-            <p className="mb-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
+          
+          {/* Coluna Esquerda: Preview e Info */}
+          <div className="w-1/4 flex flex-col gap-4">
+            
+            {/* Painel de Pré-visualização */}
+            <div className="flex flex-col items-center p-4 border rounded-md bg-muted/50 self-start">
+              <div
+                className="w-24 h-24 mb-4"
+                dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, localColor) }}
+              />
+              <p className="mb-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
+            </div>
+
+            {/* Nova Card de Informações */}
+            <IconInfoCard icon={icon} />
           </div>
 
           {/* Visualizador de Código */}
