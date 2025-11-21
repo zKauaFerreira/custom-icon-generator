@@ -38,7 +38,10 @@ const Index = () => {
     const fetchIcons = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://cdn.jsdelivr.net/npm/simple-icons/icons.json');
+        const response = await fetch('https://cdn.simpleicons.org/icons.json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         const iconList = data.icons.map((icon: any) => ({
           title: icon.title,
