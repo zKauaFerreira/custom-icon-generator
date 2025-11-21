@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import canvasToIco from 'canvas-to-ico';
+import { ICO } from 'icojs';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -97,24 +97,33 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse, pre
         const pngUrl = await convertSvgToPng(url, 256);
         triggerDownload(pngUrl, fileName);
       } else if (format === 'ico') {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) throw new Error("Could not get canvas context");
+        const sizes = [16, 32, 48];
+        const imageBuffers = await Promise.all(sizes.map(size => {
+          return new Promise<{ data: Uint8ClampedArray; width: number; height: number; }>((resolve, reject) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return reject(new Error('Could not get canvas context'));
 
-        const img = new Image();
-        await new Promise<void>((resolve, reject) => {
-            img.onload = () => resolve();
-            img.onerror = (e) => reject(new Error(`Image load error: ${e}`));
+            const img = new Image();
+            img.onload = () => {
+              ctx.drawImage(img, 0, 0, size, size);
+              const imageData = ctx.getImageData(0, 0, size, size);
+              resolve({
+                data: imageData.data,
+                width: size,
+                height: size,
+              });
+            };
+            img.onerror = (err) => reject(err);
             img.src = url;
-        });
+          });
+        }));
 
-        const maxSize = 256;
-        canvas.width = maxSize;
-        canvas.height = maxSize;
-        ctx.drawImage(img, 0, 0, maxSize, maxSize);
-
-        const sizes = [16, 24, 32, 48, 64];
-        const icoUrl = canvasToIco(canvas, sizes);
+        const icoBuffer = ICO.encode(imageBuffers);
+        const icoBlob = new Blob([icoBuffer], { type: 'image/x-icon' });
+        const icoUrl = URL.createObjectURL(icoBlob);
         triggerDownload(icoUrl, fileName);
       }
     } catch (error) {
