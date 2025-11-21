@@ -43,11 +43,16 @@ const Index = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        const iconList = data.icons.map((icon: any) => ({
-          title: icon.title,
-          slug: icon.slug,
-        }));
-        setAllIcons(iconList);
+
+        if (data && Array.isArray(data.icons)) {
+          const iconList = data.icons.map((icon: any) => ({
+            title: icon.title,
+            slug: icon.slug,
+          }));
+          setAllIcons(iconList);
+        } else {
+          throw new Error("Formato de dados da API de ícones inesperado.");
+        }
       } catch (error) {
         console.error("Failed to fetch icon list", error);
         showError("Não foi possível carregar a lista de ícones.");
