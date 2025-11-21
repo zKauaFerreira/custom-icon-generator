@@ -154,7 +154,11 @@ const Index = () => {
               className="pl-10"
             />
           </div>
+          
+          {/* Controles: Esquerda (Cores), Centro (Resolução), Direita (Filtros) */}
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            
+            {/* Esquerda: Cores e Ações */}
             <div className="flex items-center gap-2 flex-wrap">
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -165,18 +169,7 @@ const Index = () => {
               <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => setColor(getRandomColor())}><Shuffle className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Cor Aleatória</TooltipContent></Tooltip>
               <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => updateRecentColors(color)}><Bookmark className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Salvar Cor</TooltipContent></Tooltip>
               
-              {/* Botão de Configuração de Resolução */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" onClick={() => setIsResolutionDialogOpen(true)} className="flex items-center gap-2">
-                    <Settings className="h-4 w-4" />
-                    {resolution}x{resolution}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent><p>Configurar Resolução PNG/ICO</p></TooltipContent>
-              </Tooltip>
-
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap ml-2">
                 {recentColors.map((recentColor) => (
                   <div key={recentColor} className="relative group">
                     <Tooltip>
@@ -206,6 +199,19 @@ const Index = () => {
                 ))}
               </div>
             </div>
+            
+            {/* Centro: Botão de Configuração de Resolução */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" onClick={() => setIsResolutionDialogOpen(true)} className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  {resolution}x{resolution}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent><p>Configurar Resolução PNG/ICO</p></TooltipContent>
+            </Tooltip>
+
+            {/* Direita: Ordenação */}
             <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
               <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem></TooltipTrigger><TooltipContent>Aleatório</TooltipContent></Tooltip>
               <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="az" aria-label="Ordenar de A a Z" className="whitespace-nowrap">A-Z</ToggleGroupItem></TooltipTrigger><TooltipContent>Ordem Alfabética</TooltipContent></Tooltip>
