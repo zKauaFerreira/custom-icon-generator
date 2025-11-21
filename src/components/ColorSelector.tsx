@@ -1,5 +1,4 @@
 import React from 'react';
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 interface ColorSelectorProps {
@@ -14,12 +13,13 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, setColor, r
       <div className="flex items-center gap-4">
         <div className="flex flex-col gap-2">
           <Label htmlFor="color-picker">Escolha uma cor</Label>
-          <Input
+          <input
             id="color-picker"
             type="color"
             value={color}
             onChange={(e) => setColor(e.target.value)}
-            className="w-24 h-12 p-1"
+            className="w-24 h-10 p-0 bg-transparent border-0 rounded-md cursor-pointer"
+            style={{'--color': color} as React.CSSProperties}
           />
         </div>
         {recentColors.length > 0 && (
