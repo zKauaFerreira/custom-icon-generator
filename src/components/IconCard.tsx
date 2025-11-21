@@ -136,7 +136,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
 
   return (
     <Card className="flex flex-col relative">
-      <div className="absolute top-3 left-3 z-10">
+      <div className="absolute top-3 right-3 z-10">
         <Checkbox
           checked={isSelected}
           onCheckedChange={() => onSelect(icon.slug)}
@@ -144,7 +144,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
         />
       </div>
       <CardHeader>
-        <CardTitle className="truncate pl-8">{icon.title}</CardTitle>
+        <CardTitle className="truncate pr-8">{icon.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md" style={{ backgroundColor: previewBg }}>
         {loading ? (

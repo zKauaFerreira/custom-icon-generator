@@ -12,7 +12,7 @@ import { Bookmark, Shuffle } from "lucide-react";
 import { PreviewBackgroundSelector } from "@/components/PreviewBackgroundSelector";
 import { ColorPicker } from "@/components/ColorPicker";
 import { Button } from "@/components/ui/button";
-import { BatchDownloader } from "@/components/BatchDownloader";
+import { BatchDownloaderSheet } from "@/components/BatchDownloaderSheet";
 
 export interface IconData {
   title: string;
@@ -157,15 +157,6 @@ const Index = () => {
           </div>
         </div>
 
-        {selectedIcons.size > 0 && (
-          <BatchDownloader 
-            selectedIcons={selectedIcons} 
-            allIcons={iconList} 
-            color={color}
-            onClear={() => setSelectedIcons(new Set())}
-          />
-        )}
-
         {paginatedIcons.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -200,6 +191,14 @@ const Index = () => {
           </div>
         )}
       </main>
+
+      <BatchDownloaderSheet
+        selectedIcons={selectedIcons}
+        allIcons={iconList}
+        color={color}
+        onClear={() => setSelectedIcons(new Set())}
+      />
+
       <MadeWithDyad />
     </div>
   );
