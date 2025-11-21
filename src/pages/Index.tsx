@@ -13,11 +13,7 @@ import { BatchDownloaderSheet } from "@/components/BatchDownloaderSheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BackToTopButton } from "@/components/BackToTopButton";
 import { ResolutionDialog } from "@/components/ResolutionDialog";
-
-export interface IconData {
-  title: string;
-  slug: string;
-}
+import { IconData } from "@/types/icon";
 
 const iconList: IconData[] = Object.values(allSimpleIcons)
   .filter((icon): icon is SimpleIcon => 

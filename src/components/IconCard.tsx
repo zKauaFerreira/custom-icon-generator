@@ -6,12 +6,8 @@ import { Checkbox } from './ui/checkbox';
 import { svgToPng, svgToIco } from '@/lib/image-converter';
 import { showError } from '@/utils/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { SvgCodeViewerDialog } from './SvgCodeViewerDialog'; // Importando o novo componente
-
-interface IconData {
-  title: string;
-  slug: string;
-}
+import { SvgCodeViewerDialog } from './SvgCodeViewerDialog';
+import type { IconData } from '@/types/icon';
 
 interface IconCardProps {
   icon: IconData;
