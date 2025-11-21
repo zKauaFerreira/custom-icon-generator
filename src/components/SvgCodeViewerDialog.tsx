@@ -141,11 +141,10 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         
         <div className="flex gap-4 flex-grow min-h-0">
           
-          {/* Coluna Esquerda: Preview e Info */}
-          {/* Usando flex-grow para que esta coluna ocupe toda a altura disponível */}
-          <div className="w-1/4 flex flex-col gap-4 flex-grow"> 
+          {/* Coluna Esquerda: Preview e Info - Agora w-1/3 */}
+          <div className="w-1/3 flex flex-col gap-4 flex-grow"> 
             
-            {/* Painel de Pré-visualização - Agora com flex-grow para dividir o espaço igualmente */}
+            {/* Painel de Pré-visualização */}
             <div className="flex flex-col items-center p-4 border rounded-md bg-muted/50 flex-grow justify-center">
               <div
                 className="w-24 h-24 mb-4"
@@ -154,12 +153,12 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
               <p className="text-sm text-muted-foreground text-center">Pré-visualização</p>
             </div>
 
-            {/* Card de Informações - Também com flex-grow para dividir o espaço igualmente */}
+            {/* Card de Informações */}
             <IconInfoCard icon={icon} onColorSelect={setLocalColor} />
           </div>
 
-          {/* Visualizador de Código */}
-          <div className="flex-grow bg-gray-900 rounded-md overflow-hidden border border-gray-700">
+          {/* Visualizador de Código - Agora w-2/3 */}
+          <div className="w-2/3 bg-gray-900 rounded-md overflow-hidden border border-gray-700">
             <ScrollArea className="h-full p-4 text-sm font-mono text-white">
               <pre className="whitespace-pre-wrap break-words">
                 <code dangerouslySetInnerHTML={{ __html: formattedHtml }} />
