@@ -120,7 +120,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
   };
 
   const TitleComponent = (
-    // Removendo a margem inferior padrão do CardTitle (mb-0)
+    // Garantindo que não haja margem inferior
     <CardTitle ref={titleRef} className="truncate leading-normal mb-0"> 
       {icon.title}
     </CardTitle>
