@@ -14,7 +14,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { BackToTopButton } from "@/components/BackToTopButton";
 import { ResolutionDialog } from "@/components/ResolutionDialog";
 import { useLocation } from "react-router-dom";
-import { useLenis } from "@/components/LenisProvider";
+import { useLenis } from "@/components/LenisProvider"; // Importação adicionada
 
 export interface IconData {
   title: string;
@@ -126,7 +126,7 @@ const Index = () => {
       return icons.sort((a, b) => a.title.localeCompare(b.title));
     }
     if (sortBy === 'za') {
-      return icons.sort((a, b) => b.title.localeCompare(a.title));
+      return icons.sort((a, b) => b.title.localeCompare(b.title));
     }
     return icons;
   }, [sortBy, shuffledIcons]);
