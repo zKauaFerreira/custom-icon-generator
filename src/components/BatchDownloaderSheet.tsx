@@ -90,6 +90,7 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
     setIsClearDialogOpen(false);
   };
 
+  // O componente deve ser exibido se houver 1 ou mais ícones selecionados.
   if (selectedIcons.size === 0) {
     return null;
   }
