@@ -1,7 +1,13 @@
 import ICO from 'icojs';
 
-const svgTextToDataUrl = (svgText: string): string => {
-  const encodedSvg = btoa(unescape(encodeURIComponent(svgText)));
+const svgTextToDataUrl = (svgText: string, size: number): string => {
+  // Adiciona largura e altura ao SVG para renderização correta no canvas.
+  // Os SVGs do simple-icons têm viewBox, mas não width/height.
+  const svgWithSize = svgText.replace(
+    '<svg',
+    `<svg width="${size}" height="${size}"`
+  );
+  const encodedSvg = btoa(svgWithSize);
   return `data:image/svg+xml;base64,${encodedSvg}`;
 };
 
@@ -24,8 +30,11 @@ export const svgToPng = (svgText: string, size: number): Promise<Blob> => {
         }
       }, 'image/png');
     };
-    img.onerror = (e) => reject(new Error(`Falha ao carregar SVG na imagem: ${e}`));
-    img.src = svgTextToDataUrl(svgText);
+    img.onerror = (e) => {
+      console.error("Erro ao carregar SVG na imagem para conversão PNG:", e);
+      reject(new Error(`Falha ao carregar SVG na imagem.`));
+    };
+    img.src = svgTextToDataUrl(svgText, size);
   });
 };
 
@@ -33,7 +42,6 @@ export const svgToIco = (svgText: string): Promise<Blob> => {
   return new Promise(async (resolve, reject) => {
     try {
       const sizes = [16, 32, 48, 64];
-      const dataUrl = svgTextToDataUrl(svgText);
 
       const imageBuffers = await Promise.all(sizes.map(size => {
         return new Promise<{ data: Uint8ClampedArray; width: number; height: number; }>((resolve, reject) => {
@@ -53,8 +61,11 @@ export const svgToIco = (svgText: string): Promise<Blob> => {
               height: size,
             });
           };
-          img.onerror = (err) => reject(err);
-          img.src = dataUrl;
+          img.onerror = (err) => {
+            console.error(`Erro ao carregar SVG na imagem para conversão ICO (tamanho ${size}):`, err);
+            reject(new Error(`Falha ao carregar SVG para o tamanho ${size}.`));
+          };
+          img.src = svgTextToDataUrl(svgText, size);
         });
       }));
 
