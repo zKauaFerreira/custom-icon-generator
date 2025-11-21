@@ -141,8 +141,8 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
         
         <div className="flex gap-4 flex-grow min-h-0">
           
-          {/* Coluna Esquerda: Preview e Info - Agora w-1/3 */}
-          <div className="w-1/3 flex flex-col gap-4 flex-grow"> 
+          {/* Coluna Esquerda: Preview e Info - Usando min-w e flex-shrink-0 */}
+          <div className="flex flex-col gap-4 flex-grow-0 flex-shrink-0 basis-auto min-w-[200px] max-w-[300px]"> 
             
             {/* Painel de Pré-visualização */}
             <div className="flex flex-col items-center p-4 border rounded-md bg-muted/50 flex-grow justify-center">
@@ -157,8 +157,8 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
             <IconInfoCard icon={icon} onColorSelect={setLocalColor} />
           </div>
 
-          {/* Visualizador de Código - Agora w-2/3 */}
-          <div className="w-2/3 bg-gray-900 rounded-md overflow-hidden border border-gray-700">
+          {/* Visualizador de Código - Ocupa o espaço restante */}
+          <div className="flex-grow bg-gray-900 rounded-md overflow-hidden border border-gray-700">
             <ScrollArea className="h-full p-4 text-sm font-mono text-white">
               <pre className="whitespace-pre-wrap break-words">
                 <code dangerouslySetInnerHTML={{ __html: formattedHtml }} />
