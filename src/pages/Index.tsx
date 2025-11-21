@@ -14,7 +14,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { BackToTopButton } from "@/components/BackToTopButton";
 import { ResolutionDialog } from "@/components/ResolutionDialog";
 import { useLocation } from "react-router-dom";
-import { useLenis } from "@/components/LenisProvider"; // Importação adicionada
+import { useLenis } from "@/components/LenisProvider";
 
 export interface IconData {
   title: string;
@@ -126,7 +126,7 @@ const Index = () => {
       return icons.sort((a, b) => a.title.localeCompare(b.title));
     }
     if (sortBy === 'za') {
-      return icons.sort((a, b) => b.title.localeCompare(b.title));
+      return icons.sort((a, b) => b.title.localeCompare(a.title));
     }
     return icons;
   }, [sortBy, shuffledIcons]);
@@ -179,8 +179,22 @@ const Index = () => {
                 </TooltipTrigger>
                 <TooltipContent><p>Selecionar Cor</p></TooltipContent>
               </Tooltip>
-              <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => setColor(getRandomColor())}><Shuffle className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Cor Aleatória</TooltipContent></Tooltip>
-              <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => updateRecentColors(color)}><Bookmark className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Salvar Cor</TooltipContent></Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="icon" onClick={() => setColor(getRandomColor())}>
+                    <Shuffle className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Cor Aleatória</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="icon" onClick={() => updateRecentColors(color)}>
+                    <Bookmark className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Salvar Cor</TooltipContent>
+              </Tooltip>
               
               <div className="flex gap-2 flex-wrap ml-2">
                 {recentColors.map((recentColor) => (
@@ -226,9 +240,30 @@ const Index = () => {
 
             {/* Direita: Ordenação */}
             <ToggleGroup type="single" value={sortBy} onValueChange={(value) => value && setSortBy(value as any)}>
-              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente"><Shuffle className="h-4 w-4" /></ToggleGroupItem></TooltipTrigger><TooltipContent>Aleatório</TooltipContent></Tooltip>
-              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="az" aria-label="Ordenar de A a Z" className="whitespace-nowrap">A-Z</ToggleGroupItem></ToggleGroupTrigger><TooltipContent>Ordem Alfabética</TooltipContent></Tooltip>
-              <Tooltip><TooltipTrigger asChild><ToggleGroupItem value="za" aria-label="Ordenar de Z a A" className="whitespace-nowrap">Z-A</ToggleGroupItem></ToggleGroupTrigger><TooltipContent>Ordem Alfabética Inversa</TooltipContent></ToggleGroup>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ToggleGroupItem value="random" aria-label="Ordenar aleatoriamente">
+                    <Shuffle className="h-4 w-4" />
+                  </ToggleGroupItem>
+                </TooltipTrigger>
+                <TooltipContent>Aleatório</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ToggleGroupItem value="az" aria-label="Ordenar de A a Z" className="whitespace-nowrap">
+                    A-Z
+                  </ToggleGroupItem>
+                </TooltipTrigger>
+                <TooltipContent>Ordem Alfabética</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ToggleGroupItem value="za" aria-label="Ordenar de Z a A" className="whitespace-nowrap">
+                    Z-A
+                  </ToggleGroupItem>
+                </TooltipTrigger>
+                <TooltipContent>Ordem Alfabética Inversa</TooltipContent>
+              </Tooltip>
             </ToggleGroup>
           </div>
         </div>
