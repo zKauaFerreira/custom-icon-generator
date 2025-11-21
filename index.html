@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>dyad-generated-app</title>
+    <script>
+      // Força a rolagem para o topo imediatamente para evitar que o navegador restaure a posição anterior após F5.
+      window.onload = function() {
+        window.scrollTo(0, 0);
+      };
+    </script>
   </head>
 
   <body>
