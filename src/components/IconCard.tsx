@@ -52,7 +52,8 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
 
   const getColoredSvg = (baseSvg: string | null, fillColor: string) => {
     if (!baseSvg) return '';
-    return baseSvg.replace('<svg', `<svg fill="${fillColor}"`);
+    // Usa regex para adicionar o atributo fill sem remover os existentes (como viewBox).
+    return baseSvg.replace(/<svg(.*?)>/, `<svg fill="${fillColor}"$1>`);
   };
 
   const triggerDownload = (url: string, fileName: string) => {

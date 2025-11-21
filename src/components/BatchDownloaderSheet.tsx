@@ -28,7 +28,8 @@ interface BatchDownloaderSheetProps {
 
 const getColoredSvg = (baseSvg: string, fillColor: string) => {
   if (!baseSvg) return '';
-  return baseSvg.replace('<svg', `<svg fill="${fillColor}"`);
+  // Usa regex para adicionar o atributo fill sem remover os existentes (como viewBox).
+  return baseSvg.replace(/<svg(.*?)>/, `<svg fill="${fillColor}"$1>`);
 };
 
 export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ selectedIcons, allIcons, color, onClear, onRemoveIcon }) => {

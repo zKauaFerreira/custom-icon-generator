@@ -17,8 +17,8 @@ export const svgToPng = async (svgText: string, size: number): Promise<Blob> => 
     throw new Error("Não foi possível obter o contexto do canvas");
   }
 
-  // Garante que o SVG tenha um tamanho definido para o canvg renderizar corretamente.
-  const sizedSvg = svgText.replace('<svg', `<svg width="${size}" height="${size}"`);
+  // Garante que o SVG tenha um tamanho definido, preservando os atributos existentes.
+  const sizedSvg = svgText.replace(/<svg(.*?)>/, `<svg width="${size}" height="${size}"$1>`);
 
   const v = await Canvg.from(ctx, sizedSvg);
   await v.render();
@@ -53,7 +53,7 @@ export const svgToIco = async (svgText: string): Promise<Blob> => {
         throw new Error(`Não foi possível obter o contexto do canvas para o tamanho ${size}`);
       }
 
-      const sizedSvg = svgText.replace('<svg', `<svg width="${size}" height="${size}"`);
+      const sizedSvg = svgText.replace(/<svg(.*?)>/, `<svg width="${size}" height="${size}"$1>`);
       const v = await Canvg.from(ctx, sizedSvg);
       await v.render();
 
