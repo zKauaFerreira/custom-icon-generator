@@ -10,8 +10,9 @@ import { Copy, Download, Image } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
 import { showSuccess, showError } from "@/utils/toast";
 import { IconData } from "@/pages/Index";
-import { svgToPng, svgToIco } from "@/lib/image-converter";
+import { svgToPng } from "@/lib/image-converter";
 import { saveAs } from "file-saver";
+import { cn } from "@/lib/utils";
 
 interface SvgCodeViewerDialogProps {
   open: boolean;
@@ -50,7 +51,7 @@ const formatAndColorizeSvg = (svgText: string, color: string): string => {
   return formatted;
 };
 
-// Função utilitária para obter o SVG colorido puro para cópia
+// Função utilitária para obter o SVG colorido puro para cópia/download
 const getColoredSvgString = (svgText: string, color: string): string => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(svgText, "image/svg+xml");
@@ -87,25 +88,60 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
     }
   };
 
+  const handleDownloadSvg = () => {
+    try {
+      const cleanColor = color.substring(1);
+      const blob = new Blob([coloredSvgString], { type: 'image/svg+xml;charset=utf-8' });
+      saveAs(blob, `${icon.slug}-${cleanColor}.svg`);
+      showSuccess("Download SVG iniciado!");
+    } catch (error) {
+      console.error('Failed to download SVG:', error);
+      showError("Falha ao baixar o SVG.");
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl w-[90vw] h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Visualizar Código SVG: {icon.title}</DialogTitle>
+          <DialogTitle className="flex items-center gap-3">
+            Visualizar Código SVG: {icon.title}
+            <div 
+              className="w-6 h-6 rounded-full border border-border" 
+              style={{ backgroundColor: color }} 
+              title={`Cor: ${color}`}
+            />
+          </DialogTitle>
           <DialogDescription>
-            Código SVG colorido com a cor selecionada ({color}).
+            Código SVG colorido com a cor selecionada (<span className="font-mono font-semibold">{color}</span>).
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex-grow min-h-0 bg-gray-900 rounded-md overflow-hidden border border-gray-700">
-          <ScrollArea className="h-full p-4 text-sm font-mono text-white">
-            <pre className="whitespace-pre-wrap break-words">
-              <code dangerouslySetInnerHTML={{ __html: formattedHtml }} />
-            </pre>
-          </ScrollArea>
+        <div className="flex gap-4 flex-grow min-h-0">
+          {/* Pré-visualização do Ícone */}
+          <div className="w-1/4 flex flex-col items-center justify-center p-4 border rounded-md bg-muted/50">
+            <div
+              className="w-24 h-24"
+              dangerouslySetInnerHTML={{ __html: getColoredSvgString(svgContent, color) }}
+            />
+            <p className="mt-4 text-sm text-muted-foreground text-center">Pré-visualização</p>
+          </div>
+
+          {/* Visualizador de Código */}
+          <div className="flex-grow bg-gray-900 rounded-md overflow-hidden border border-gray-700">
+            <ScrollArea className="h-full p-4 text-sm font-mono text-white">
+              <pre className="whitespace-pre-wrap break-words">
+                <code dangerouslySetInnerHTML={{ __html: formattedHtml }} />
+              </pre>
+            </ScrollArea>
+          </div>
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
+          <Button variant="outline" onClick={handleDownloadSvg}>
+            <Download className="h-4 w-4 mr-2" />
+            Baixar SVG
+          </Button>
           <Button variant="outline" onClick={handleDownloadPng}>
             <Image className="h-4 w-4 mr-2" />
             Baixar PNG ({resolution}x{resolution})
@@ -113,9 +149,6 @@ export const SvgCodeViewerDialog: React.FC<SvgCodeViewerDialogProps> = ({ open, 
           <Button onClick={handleCopySvg}>
             <Copy className="h-4 w-4 mr-2" />
             Copiar Código SVG
-          </Button>
-          <Button variant="secondary" onClick={() => onOpenChange(false)}>
-            Fechar
           </Button>
         </div>
       </DialogContent>

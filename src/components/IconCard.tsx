@@ -125,7 +125,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
 
   return (
     <>
-      <Card className="flex flex-col relative bg-card cursor-pointer transition-shadow hover:shadow-lg" onClick={() => setIsCodeViewerOpen(true)}>
+      <Card className="flex flex-col relative bg-card cursor-pointer transition-shadow hover:shadow-lg" onClick={() => svgContent && setIsCodeViewerOpen(true)}>
         <div className="absolute top-3 right-3 z-10" onClick={(e) => e.stopPropagation()}>
           <Tooltip>
             <TooltipTrigger asChild>
