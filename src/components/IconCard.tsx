@@ -50,9 +50,8 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
     fetchSvg();
   }, [icon.slug]);
 
-  const getColoredSvgForPreview = (baseSvg: string | null, fillColor: string) => {
+  const getSvgForPreview = (baseSvg: string | null, fillColor: string) => {
     if (!baseSvg) return '';
-    // Adiciona o atributo fill apenas para a visualização no card.
     return baseSvg.replace(/<svg(.*?)>/, `<svg fill="${fillColor}"$1>`);
   };
 
@@ -67,7 +66,11 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
   };
 
   const handleDownload = async (format: 'svg' | 'png' | 'ico') => {
-    if (!svgContent) return;
+    // Ponto crítico da correção: Sempre usar o svgContent original e não modificado.
+    if (!svgContent) {
+      showError("Conteúdo do ícone ainda não carregado.");
+      return;
+    }
 
     const cleanColor = color.substring(1);
     const fileName = `${icon.slug}-${cleanColor}.${format}`;
@@ -75,14 +78,18 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
     try {
       let blob: Blob;
       if (format === 'svg') {
-        // Para download de SVG, a coloração é feita aqui, pois não usa o canvg.
-        const coloredSvg = getColoredSvgForPreview(svgContent, color);
+        // Para o download de SVG, a coloração é feita de forma segura aqui.
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgContent, "image/svg+xml");
+        doc.documentElement.setAttribute('fill', color);
+        const serializer = new XMLSerializer();
+        const coloredSvg = serializer.serializeToString(doc.documentElement);
         blob = new Blob([coloredSvg], { type: 'image/svg+xml;charset=utf-8' });
       } else if (format === 'png') {
-        // Passa o SVG original e a cor para o conversor.
+        // Passa o SVG ORIGINAL e a cor para a função de conversão.
         blob = await svgToPng(svgContent, 256, color);
       } else { // ico
-        // Passa o SVG original e a cor para o conversor.
+        // Passa o SVG ORIGINAL e a cor para a função de conversão.
         blob = await svgToIco(svgContent, color);
       }
       
@@ -112,7 +119,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, previewBg, isSe
         ) : svgContent ? (
           <div
             className="w-16 h-16"
-            dangerouslySetInnerHTML={{ __html: getColoredSvgForPreview(svgContent, color) }}
+            dangerouslySetInnerHTML={{ __html: getSvgForPreview(svgContent, color) }}
           />
         ) : (
           <div className="w-16 h-16 bg-destructive/20 rounded-md" />
