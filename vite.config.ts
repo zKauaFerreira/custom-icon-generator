@@ -40,6 +40,8 @@ export default defineConfig(() => ({
         ]
       },
       workbox: {
+        // Increase the file size limit to 10MB to allow precaching of large chunks
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/cdn\.simpleicons\.org\/.*/i,
@@ -62,6 +64,21 @@ export default defineConfig(() => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Manual chunking to separate the large simple-icons dependency
+        manualChunks(id) {
+          if (id.includes('node_modules/simple-icons')) {
+            return 'simple-icons';
+          }
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        },
+      },
     },
   },
 }));
