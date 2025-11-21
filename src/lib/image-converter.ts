@@ -2,34 +2,27 @@ import { Canvg } from 'canvg';
 import ICO from 'icojs';
 
 /**
- * Prepara uma string SVG para renderização, adicionando ou modificando atributos de forma segura.
- * Remove qualquer atributo 'fill' existente na tag <svg> para evitar redefinição.
+ * Prepara uma string SVG para renderização usando a API DOM, que é mais segura do que regex.
  * @param svgText A string SVG original.
  * @param options Um objeto com `size` e `color` para aplicar ao SVG.
  * @returns A string SVG modificada.
  */
 const prepareSvg = (svgText: string, options: { size?: number; color?: string }): string => {
-  let result = svgText;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(svgText, 'image/svg+xml');
+  const svgElement = doc.documentElement;
 
-  // 1. Remove qualquer atributo 'fill' preexistente da tag <svg> para evitar o erro "Attribute redefined".
-  result = result.replace(/(<svg[^>]*?)(\s*fill="[^"]*")([^>]*>)/, '$1$3');
-
-  const attributes: string[] = [];
+  // Usar setAttribute substitui qualquer atributo existente, evitando erros de "redefinição".
   if (options.color) {
-    attributes.push(`fill="${options.color}"`);
+    svgElement.setAttribute('fill', options.color);
   }
   if (options.size) {
-    attributes.push(`width="${options.size}"`);
-    attributes.push(`height="${options.size}"`);
+    svgElement.setAttribute('width', String(options.size));
+    svgElement.setAttribute('height', String(options.size));
   }
 
-  // 2. Adiciona os novos atributos (incluindo o 'fill' seguro) à tag <svg>.
-  if (attributes.length > 0) {
-    const attributeString = attributes.join(' ');
-    result = result.replace(/<svg(.*?)>/, `<svg ${attributeString}$1>`);
-  }
-
-  return result;
+  const serializer = new XMLSerializer();
+  return serializer.serializeToString(svgElement);
 };
 
 
