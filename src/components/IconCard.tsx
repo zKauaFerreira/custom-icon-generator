@@ -98,8 +98,15 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, onColorUse, pre
         triggerDownload(pngUrl, fileName);
       } else if (format === 'ico') {
         const sizes = [16, 24, 32, 48, 64];
-        const pngBlobs = await Promise.all(sizes.map(size => convertSvgToPng(url, size)));
-        const icoFile = await toIco(pngBlobs);
+        const pngDataUrls = await Promise.all(sizes.map(size => convertSvgToPng(url, size)));
+        
+        const pngBuffers = await Promise.all(pngDataUrls.map(async (dataUrl) => {
+            const res = await fetch(dataUrl);
+            const blob = await res.blob();
+            return blob.arrayBuffer();
+        }));
+
+        const icoFile = await toIco(pngBuffers);
         const icoUrl = URL.createObjectURL(new Blob([icoFile], { type: 'image/x-icon' }));
         triggerDownload(icoUrl, fileName);
       }
