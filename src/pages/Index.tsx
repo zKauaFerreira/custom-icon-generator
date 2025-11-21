@@ -133,25 +133,40 @@ const Index = () => {
           </div>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex items-center gap-2">
-              <ColorPicker value={color} onChange={setColor} />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div><ColorPicker value={color} onChange={setColor} /></div>
+                </TooltipTrigger>
+                <TooltipContent><p>Selecionar Cor</p></TooltipContent>
+              </Tooltip>
               <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => setColor(getRandomColor())}><Shuffle className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Cor Aleatória</TooltipContent></Tooltip>
               <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => updateRecentColors(color)}><Bookmark className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Salvar Cor</TooltipContent></Tooltip>
               <div className="flex gap-2 flex-wrap">
                 {recentColors.map((recentColor) => (
                   <div key={recentColor} className="relative group">
-                    <button
-                      className="w-8 h-8 rounded-full border"
-                      style={{ backgroundColor: recentColor }}
-                      onClick={() => setColor(recentColor)}
-                      aria-label={`Select color ${recentColor}`}
-                    />
-                    <button
-                      onClick={() => removeRecentColor(recentColor)}
-                      className="absolute -top-1 -right-1 bg-card border rounded-full p-0.5 hidden group-hover:flex items-center justify-center"
-                      aria-label={`Remove color ${recentColor}`}
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          className="w-8 h-8 rounded-full border"
+                          style={{ backgroundColor: recentColor }}
+                          onClick={() => setColor(recentColor)}
+                          aria-label={`Select color ${recentColor}`}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent><p>Usar cor {recentColor}</p></TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() => removeRecentColor(recentColor)}
+                          className="absolute -top-1 -right-1 bg-card border rounded-full p-0.5 hidden group-hover:flex items-center justify-center"
+                          aria-label={`Remove color ${recentColor}`}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent><p>Remover cor</p></TooltipContent>
+                    </Tooltip>
                   </div>
                 ))}
               </div>
@@ -180,13 +195,23 @@ const Index = () => {
             <Pagination className="mt-8">
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); setCurrentPage((p) => Math.max(p - 1, 1)); }} className={currentPage === 1 ? "pointer-events-none opacity-50" : ""} />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); setCurrentPage((p) => Math.max(p - 1, 1)); }} className={currentPage === 1 ? "pointer-events-none opacity-50" : ""} />
+                    </TooltipTrigger>
+                    <TooltipContent><p>Página Anterior</p></TooltipContent>
+                  </Tooltip>
                 </PaginationItem>
                 <PaginationItem>
                   <span className="px-4 py-2 text-sm font-medium">Página {currentPage} de {pageCount}</span>
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationNext href="#" onClick={(e) => { e.preventDefault(); setCurrentPage((p) => Math.min(p + 1, pageCount)); }} className={currentPage === pageCount ? "pointer-events-none opacity-50" : ""} />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <PaginationNext href="#" onClick={(e) => { e.preventDefault(); setCurrentPage((p) => Math.min(p + 1, pageCount)); }} className={currentPage === pageCount ? "pointer-events-none opacity-50" : ""} />
+                    </TooltipTrigger>
+                    <TooltipContent><p>Próxima Página</p></TooltipContent>
+                  </Tooltip>
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

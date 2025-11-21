@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from './ui/checkbox';
 import { svgToPng, svgToIco } from '@/lib/image-converter';
 import { showError } from '@/utils/toast';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 interface IconData {
   title: string;
@@ -99,11 +100,18 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onS
   return (
     <Card className="flex flex-col relative bg-card">
       <div className="absolute top-3 right-3 z-10">
-        <Checkbox
-          checked={isSelected}
-          onCheckedChange={() => onSelect(icon.slug)}
-          aria-label={`Select ${icon.title}`}
-        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Checkbox
+              checked={isSelected}
+              onCheckedChange={() => onSelect(icon.slug)}
+              aria-label={`Select ${icon.title}`}
+            />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Selecionar</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
       <CardHeader>
         <CardTitle className="truncate pr-8 leading-normal">{icon.title}</CardTitle>
@@ -121,9 +129,24 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onS
         )}
       </CardContent>
       <CardFooter className="flex flex-wrap justify-center gap-2">
-        <Button size="sm" variant="outline" onClick={() => handleDownload('svg')} disabled={loading || !svgContent}>SVG</Button>
-        <Button size="sm" variant="outline" onClick={() => handleDownload('png')} disabled={loading || !svgContent}>PNG</Button>
-        <Button size="sm" variant="outline" onClick={() => handleDownload('ico')} disabled={loading || !svgContent}>ICO</Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button size="sm" variant="outline" onClick={() => handleDownload('svg')} disabled={loading || !svgContent}>SVG</Button>
+          </TooltipTrigger>
+          <TooltipContent><p>Baixar como SVG</p></TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button size="sm" variant="outline" onClick={() => handleDownload('png')} disabled={loading || !svgContent}>PNG</Button>
+          </TooltipTrigger>
+          <TooltipContent><p>Baixar como PNG</p></TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button size="sm" variant="outline" onClick={() => handleDownload('ico')} disabled={loading || !svgContent}>ICO</Button>
+          </TooltipTrigger>
+          <TooltipContent><p>Baixar como ICO</p></TooltipContent>
+        </Tooltip>
       </CardFooter>
     </Card>
   );
