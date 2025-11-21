@@ -6,6 +6,7 @@ import { Checkbox } from './ui/checkbox';
 import { svgToPng, svgToIco } from '@/lib/image-converter';
 import { showError } from '@/utils/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { SvgCodeViewerDialog } from './SvgCodeViewerDialog'; // Importando o novo componente
 
 interface IconData {
   title: string;
@@ -15,16 +16,18 @@ interface IconData {
 interface IconCardProps {
   icon: IconData;
   color: string;
+  resolution: number; // Nova propriedade
   isSelected: boolean;
   onSelect: (slug: string) => void;
 }
 
 const svgCache = new Map<string, string>();
 
-export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onSelect }) => {
+export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isSelected, onSelect }) => {
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isTruncated, setIsTruncated] = useState(false);
+  const [isCodeViewerOpen, setIsCodeViewerOpen] = useState(false); // Estado para o novo modal
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -101,7 +104,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onS
         const coloredSvg = serializer.serializeToString(doc.documentElement);
         blob = new Blob([coloredSvg], { type: 'image/svg+xml;charset=utf-8' });
       } else if (format === 'png') {
-        blob = await svgToPng(svgContent, 256, color);
+        blob = await svgToPng(svgContent, resolution, color); // Usando a resolução
       } else { // ico
         blob = await svgToIco(svgContent, color);
       }
@@ -121,67 +124,80 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, isSelected, onS
   );
 
   return (
-    <Card className="flex flex-col relative bg-card">
-      <div className="absolute top-3 right-3 z-10">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Checkbox
-              checked={isSelected}
-              onCheckedChange={() => onSelect(icon.slug)}
-              aria-label={`Select ${icon.title}`}
-            />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Selecionar</p>
-          </TooltipContent>
-        </Tooltip>
-      </div>
-      <CardHeader>
-        {isTruncated ? (
+    <>
+      <Card className="flex flex-col relative bg-card cursor-pointer transition-shadow hover:shadow-lg" onClick={() => setIsCodeViewerOpen(true)}>
+        <div className="absolute top-3 right-3 z-10" onClick={(e) => e.stopPropagation()}>
           <Tooltip>
             <TooltipTrigger asChild>
-              {TitleComponent}
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={() => onSelect(icon.slug)}
+                aria-label={`Select ${icon.title}`}
+              />
             </TooltipTrigger>
             <TooltipContent>
-              <p>{icon.title}</p>
+              <p>Selecionar</p>
             </TooltipContent>
           </Tooltip>
-        ) : (
-          TitleComponent
-        )}
-      </CardHeader>
-      <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md">
-        {loading ? (
-          <Skeleton className="h-16 w-16" />
-        ) : svgContent ? (
-          <div
-            className="w-16 h-16"
-            dangerouslySetInnerHTML={{ __html: getSvgForPreview(svgContent, color) }}
-          />
-        ) : (
-          <div className="w-16 h-16 bg-destructive/20 rounded-md" />
-        )}
-      </CardContent>
-      <CardFooter className="flex flex-wrap justify-center gap-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button size="sm" variant="outline" onClick={() => handleDownload('svg')} disabled={loading || !svgContent}>SVG</Button>
-          </TooltipTrigger>
-          <TooltipContent><p>Baixar como SVG</p></TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button size="sm" variant="outline" onClick={() => handleDownload('png')} disabled={loading || !svgContent}>PNG</Button>
-          </TooltipTrigger>
-          <TooltipContent><p>Baixar como PNG</p></TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button size="sm" variant="outline" onClick={() => handleDownload('ico')} disabled={loading || !svgContent}>ICO</Button>
-          </TooltipTrigger>
-          <TooltipContent><p>Baixar como ICO</p></TooltipContent>
-        </Tooltip>
-      </CardFooter>
-    </Card>
+        </div>
+        <CardHeader>
+          {isTruncated ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {TitleComponent}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{icon.title}</p>
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            TitleComponent
+          )}
+        </CardHeader>
+        <CardContent className="flex-grow flex justify-center items-center p-6 rounded-md">
+          {loading ? (
+            <Skeleton className="h-16 w-16" />
+          ) : svgContent ? (
+            <div
+              className="w-16 h-16"
+              dangerouslySetInnerHTML={{ __html: getSvgForPreview(svgContent, color) }}
+            />
+          ) : (
+            <div className="w-16 h-16 bg-destructive/20 rounded-md" />
+          )}
+        </CardContent>
+        <CardFooter className="flex flex-wrap justify-center gap-2" onClick={(e) => e.stopPropagation()}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="sm" variant="outline" onClick={() => handleDownload('svg')} disabled={loading || !svgContent}>SVG</Button>
+            </TooltipTrigger>
+            <TooltipContent><p>Baixar como SVG</p></TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="sm" variant="outline" onClick={() => handleDownload('png')} disabled={loading || !svgContent}>PNG</Button>
+            </TooltipTrigger>
+            <TooltipContent><p>Baixar como PNG ({resolution}x{resolution})</p></TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="sm" variant="outline" onClick={() => handleDownload('ico')} disabled={loading || !svgContent}>ICO</Button>
+            </TooltipTrigger>
+            <TooltipContent><p>Baixar como ICO (Múltiplas resoluções)</p></TooltipContent>
+          </Tooltip>
+        </CardFooter>
+      </Card>
+      
+      {svgContent && (
+        <SvgCodeViewerDialog
+          open={isCodeViewerOpen}
+          onOpenChange={setIsCodeViewerOpen}
+          icon={icon}
+          svgContent={svgContent}
+          color={color}
+          resolution={resolution}
+        />
+      )}
+    </>
   );
 };

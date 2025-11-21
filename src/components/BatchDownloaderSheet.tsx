@@ -22,11 +22,12 @@ interface BatchDownloaderSheetProps {
   selectedIcons: Set<string>;
   allIcons: IconData[];
   color: string;
+  resolution: number; // Nova propriedade
   onClear: () => void;
   onRemoveIcon: (slug: string) => void;
 }
 
-export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ selectedIcons, allIcons, color, onClear, onRemoveIcon }) => {
+export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ selectedIcons, allIcons, color, resolution, onClear, onRemoveIcon }) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -56,7 +57,7 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
             const serializer = new XMLSerializer();
             fileContent = serializer.serializeToString(doc.documentElement);
           } else if (format === 'png') {
-            fileContent = await svgToPng(svgText, 256, color);
+            fileContent = await svgToPng(svgText, resolution, color); // Usando a resolução
           } else { // ico
             fileContent = await svgToIco(svgText, color);
           }
@@ -99,7 +100,7 @@ export const BatchDownloaderSheet: React.FC<BatchDownloaderSheetProps> = ({ sele
           <SheetHeader>
             <SheetTitle>Ícones Selecionados ({selectedIcons.size})</SheetTitle>
             <SheetDescription>
-              Revise sua seleção e baixe todos os ícones de uma vez.
+              Revise sua seleção e baixe todos os ícones de uma vez. (PNG/ICO em {resolution}x{resolution})
             </SheetDescription>
           </SheetHeader>
           <ScrollArea className="flex-grow my-4 pr-4">

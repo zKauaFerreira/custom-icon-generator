@@ -6,12 +6,13 @@ import * as allSimpleIcons from 'simple-icons';
 import type { SimpleIcon } from 'simple-icons';
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Bookmark, Search, Shuffle, X } from "lucide-react";
+import { Bookmark, Search, Shuffle, Settings, X } from "lucide-react";
 import { ColorPicker } from "@/components/ColorPicker";
 import { Button } from "@/components/ui/button";
 import { BatchDownloaderSheet } from "@/components/BatchDownloaderSheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BackToTopButton } from "@/components/BackToTopButton";
+import { ResolutionDialog } from "@/components/ResolutionDialog";
 
 export interface IconData {
   title: string;
@@ -48,6 +49,8 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<'random' | 'az' | 'za'>('random');
   const [selectedIcons, setSelectedIcons] = useState(new Set<string>());
+  const [resolution, setResolution] = useState(256); // Novo estado para resolução
+  const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false); // Novo estado para o modal
 
   useEffect(() => {
     try {
@@ -132,7 +135,7 @@ const Index = () => {
             />
           </div>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div><ColorPicker value={color} onChange={setColor} /></div>
@@ -141,6 +144,18 @@ const Index = () => {
               </Tooltip>
               <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => setColor(getRandomColor())}><Shuffle className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Cor Aleatória</TooltipContent></Tooltip>
               <Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => updateRecentColors(color)}><Bookmark className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Salvar Cor</TooltipContent></Tooltip>
+              
+              {/* Botão de Configuração de Resolução */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" onClick={() => setIsResolutionDialogOpen(true)} className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    {resolution}x{resolution}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent><p>Configurar Resolução PNG/ICO</p></TooltipContent>
+              </Tooltip>
+
               <div className="flex gap-2 flex-wrap">
                 {recentColors.map((recentColor) => (
                   <div key={recentColor} className="relative group">
@@ -187,6 +202,7 @@ const Index = () => {
                   key={icon.slug} 
                   icon={icon} 
                   color={color} 
+                  resolution={resolution} // Passando a resolução
                   isSelected={selectedIcons.has(icon.slug)}
                   onSelect={handleSelectIcon}
                 />
@@ -227,6 +243,7 @@ const Index = () => {
         selectedIcons={selectedIcons}
         allIcons={iconList}
         color={color}
+        resolution={resolution} // Passando a resolução
         onClear={() => setSelectedIcons(new Set())}
         onRemoveIcon={handleSelectIcon}
       />
@@ -234,6 +251,13 @@ const Index = () => {
       <BackToTopButton />
 
       <MadeWithDyad />
+
+      <ResolutionDialog
+        open={isResolutionDialogOpen}
+        onOpenChange={setIsResolutionDialogOpen}
+        currentResolution={resolution}
+        onResolutionChange={setResolution}
+      />
     </div>
   );
 };
