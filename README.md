@@ -156,7 +156,7 @@ Ensure you have Node.js (v18+) and pnpm installed on your system.
 
 1. **Clone the repository:**
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/zKauaFerreira/custom-icon-generator.git
    ```
 
 2. **Install dependencies:**
