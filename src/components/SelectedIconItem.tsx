@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { IconData } from '@/types/icon';
+import type { IconData } from '@/pages/Index';
 import { Skeleton } from './ui/skeleton';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
