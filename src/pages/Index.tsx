@@ -40,6 +40,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 const getRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
 
 const ITEMS_PER_PAGE = 50;
+const RESOLUTION_STORAGE_KEY = 'iconGeneratorResolution';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,8 +50,21 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<'random' | 'az' | 'za'>('random');
   const [selectedIcons, setSelectedIcons] = useState(new Set<string>());
-  const [resolution, setResolution] = useState(256); // Novo estado para resolução
-  const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false); // Novo estado para o modal
+  const [resolution, setResolution] = useState(() => {
+    // Inicializa a resolução a partir do localStorage
+    if (typeof window !== 'undefined') {
+      const storedResolution = localStorage.getItem(RESOLUTION_STORAGE_KEY);
+      if (storedResolution) {
+        const parsedResolution = parseInt(storedResolution, 10);
+        // Garante que o valor lido seja um número positivo
+        if (!isNaN(parsedResolution) && parsedResolution > 0) {
+          return parsedResolution;
+        }
+      }
+    }
+    return 256; // Fallback padrão
+  });
+  const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -85,6 +99,12 @@ const Index = () => {
       }
       return newSet;
     });
+  };
+
+  const handleResolutionChange = (newResolution: number) => {
+    setResolution(newResolution);
+    // Salva a nova resolução no localStorage
+    localStorage.setItem(RESOLUTION_STORAGE_KEY, newResolution.toString());
   };
 
   const sortedIcons = useMemo(() => {
@@ -256,7 +276,7 @@ const Index = () => {
         open={isResolutionDialogOpen}
         onOpenChange={setIsResolutionDialogOpen}
         currentResolution={resolution}
-        onResolutionChange={setResolution}
+        onResolutionChange={handleResolutionChange} // Usando a nova função
       />
     </div>
   );
