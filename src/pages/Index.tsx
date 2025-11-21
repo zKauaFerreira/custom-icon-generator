@@ -15,6 +15,7 @@ import { ResolutionDialog } from "@/components/ResolutionDialog";
 import { useLocation } from "react-router-dom";
 import { useLenis } from "@/components/LenisProvider";
 import { useDynamicPlaceholder } from "@/hooks/use-dynamic-placeholder";
+import { useFavicon } from "@/hooks/use-favicon"; // Importando o novo hook
 
 export interface IconData {
   title: string;
@@ -72,6 +73,9 @@ const Index = () => {
   
   // Hook for Dynamic Placeholder
   const dynamicPlaceholder = useDynamicPlaceholder(iconList);
+  
+  // Hook for Dynamic Favicon
+  useFavicon(color); // Usando o hook aqui
 
   useEffect(() => {
     try {
@@ -306,7 +310,7 @@ const Index = () => {
                     Z-A
                   </ToggleGroupItem>
                 </TooltipTrigger>
-                <TooltipContent>Reverse Alphabetical Order</TooltipContent>
+                <TooltipContent>Reverse Alphabetical Order</p></TooltipContent>
               </Tooltip>
             </ToggleGroup>
           </div>
