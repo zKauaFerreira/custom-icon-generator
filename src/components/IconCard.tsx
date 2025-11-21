@@ -120,7 +120,8 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
   };
 
   const TitleComponent = (
-    <CardTitle ref={titleRef} className="truncate leading-normal">
+    // Removendo a margem inferior padrão do CardTitle (mb-0)
+    <CardTitle ref={titleRef} className="truncate leading-normal mb-0"> 
       {icon.title}
     </CardTitle>
   );
@@ -128,7 +129,8 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
   return (
     <>
       <Card className="flex flex-col relative bg-card transition-shadow hover:shadow-lg">
-        <CardHeader className="flex flex-row items-start justify-between space-y-0 p-4 pb-2">
+        {/* Usando items-center para alinhar verticalmente o título e o checkbox */}
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2">
           <div className="flex-grow min-w-0">
             {isTruncated ? (
               <Tooltip>
@@ -143,7 +145,7 @@ export const IconCard: React.FC<IconCardProps> = ({ icon, color, resolution, isS
               TitleComponent
             )}
           </div>
-          <div className="flex-shrink-0 ml-2"> {/* Removed pt-1 here */}
+          <div className="flex-shrink-0 ml-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Checkbox
