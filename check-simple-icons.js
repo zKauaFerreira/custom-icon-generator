@@ -17,16 +17,6 @@ const autorunPackagePath = path.resolve(__dirname, "./package.json");
 const mainPackagePath = path.resolve(__dirname, "../main/package.json");
 
 /* =====================================================
-   0. LOG DE AMBIENTE
-===================================================== */
-console.log("=== Environment Variables ===");
-console.log("PAT_TOKEN:", !!process.env.PAT_TOKEN);
-console.log("REPO_OWNER:", process.env.REPO_OWNER);
-console.log("REPO_NAME:", process.env.REPO_NAME);
-console.log("TARGET_BRANCH:", process.env.TARGET_BRANCH);
-console.log("=============================");
-
-/* =====================================================
    1. PEGAR VERSÃO MAIS RECENTE DO SIMPLE-ICONS
 ===================================================== */
 async function getLatestVersion() {
@@ -136,7 +126,7 @@ async function commitToGitHub(updatedContentMain) {
         const newCommitData = await newCommitRes.json();
         console.log("✏️ New commit data:", newCommitData);
 
-        // atualizar ponteiro da branch main
+        // atualizar ponteiro da branch
         console.log("🔗 Atualizando ponteiro da branch", branch);
         const patchRes = await fetch(`${apiBase}/git/refs/heads/${branch}`, {
             method: "PATCH",
